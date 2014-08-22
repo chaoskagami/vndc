@@ -1,2 +1,8 @@
-bin/
-external/lib/
+bin/vndc
+bin/background
+bin/foreground
+bin/script
+bin/sound
+bin/default.ttf
+bin/*.scr
+external/lib/libZero.a
