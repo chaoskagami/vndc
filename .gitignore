@@ -1,8 +1,14 @@
-bin/vndc
-bin/background
-bin/foreground
-bin/script
-bin/sound
-bin/default.ttf
-bin/*.scr
-external/lib/libZero.a
+# Prevent object files and backups
+*.[oa]
+*~
+
+# Prevent all asset files.
+*.scr
+*.ogg
+*.jpg
+*.png
+*.ttf
+
+# Prevent binary & lib dirs.
+bin
+external/lib
