@@ -10,6 +10,10 @@ Run vndc -h if you don't know how to run it. Have VNDS files ready.
 
 -----
 
+A picture says a thousand words. Have a Sakura.
+
+![Screenie](https://raw.github.com/chaoskagami/vndc/data/screenshot.png)
+
 This is a clone of vnds. Actually, it's an enhanced (in my opinion) version.
 
 After converting Fate/Stay night to vnds format, I started poking through the scripts' format. My first thought was 'this format is simple'.
