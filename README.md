@@ -3,10 +3,11 @@ vndc - VNDC is Not a Direct Clone (of VNDS ;P)
 
 tl;dr
 
-Install SDL2, SDL2_mixer, SDL_image, SDL_ttf
-Run ./build in the source dir.
-You should get a binary named vndc in bin.
-Run vndc -h if you don't know how to run it. Have VNDS files ready.
+Install SDL2, SDL2_mixer, SDL_image, SDL_ttf. Run ./build in the source dir.
+
+You should get a binary named vndc in bin. Run vndc -h if you don't know how to run it. Have VNDS files ready.
+
+Important: Unzip zips first.
 
 -----
 
