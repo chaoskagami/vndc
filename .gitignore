@@ -2,13 +2,6 @@
 *.[oa]
 *~
 
-# Prevent all asset files.
-*.scr
-*.ogg
-*.jpg
-*.png
-*.ttf
-
 # Prevent binary & lib dirs.
 bin
 external/lib
