@@ -4,19 +4,20 @@ ROOT=`pwd`
 SRC=$ROOT/
 LIB=$ROOT/external/lib
 BIN=$ROOT/bin
-
+CXXFLAGS="-static -static-libgcc -static-libstdc++"
 source mk
+CXX="x86_64-w64-mingw32-g++"
 
 INCLUDE="-I$ROOT/external/include/zero -I$ROOT/vndc/include"
 
 newtd
 	mkmcc		external/src/zero
-	mkar 		libZero
+	mkar 		libZero.w64
 deltd
 
 LDFLAGS=-lZero
 
 newtd
 	mkmcc vndc/src
-	mkld		vndc
+	mkld		vndc64.exe
 deltd

@@ -4,10 +4,11 @@ ROOT=`pwd`
 SRC=$ROOT/
 LIB=$ROOT/external/lib
 BIN=$ROOT/bin
+CXXFLAGS="-m32"
+LDFLAGS="-m32"
+INCLUDE="-I$ROOT/external/include/zero -I$ROOT/vndc/include"
 
 source mk
-
-INCLUDE="-I$ROOT/external/include/zero -I$ROOT/vndc/include"
 
 newtd
 	mkmcc		external/src/zero
@@ -18,5 +19,5 @@ LDFLAGS=-lZero
 
 newtd
 	mkmcc vndc/src
-	mkld		vndc
+	mkld		vndc.32
 deltd

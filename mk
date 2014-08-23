@@ -6,7 +6,7 @@
 CXX="g++"
 CXXFLAGS="$CXXFLAGS -fPIC -std=gnu++11 -Wall -Werror -Wno-error=pointer-arith"
 LD="g++"
-LDFLAGS="-fPIC -L$LIB $LDFLAGS -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf"
+LDFLAGS="$LDFLAGS -fPIC -L$LIB $LDFLAGS -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf"
 AR="ar rcs"
 GEN="/bin/bash ./gen.sh"
 
