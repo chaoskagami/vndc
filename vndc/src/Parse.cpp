@@ -10,12 +10,6 @@ void ParseCmd(char* line) {
 
 	char** tokens = NULL;
 
-	// Remove all '\n' from this string
-	for(int i=0; i < 400; i++) {
-		if (line[i] == '\n')
-			line[i] = '\0';
-	}
-
 	strncpy(passthru_line, line, sizeof(char)*400);
 
 	if(GetData()->verbose) printf("[scr] %s\n", line);
@@ -231,7 +225,24 @@ void Parse() {
 
 	fgets(line, 400, GetData()->accessScriptHandle);
 
-	ParseCmd(line);
+	char* line_copy = line;
+
+	while(line_copy[0] == ' ' || line_copy[0] == '\t') {
+		line_copy[0] = '\0';
+		line_copy = &line_copy[1];
+	}
+
+	// Remove all '\n' from this string
+	for(int i=0; i < (int)strlen(line_copy); i++) {
+		if (line_copy[i] == '\n')
+			line_copy[i] = '\0';
+	}
+
+	//printf("%lu\n", strlen(line_copy));
+
+	if(strlen(line_copy) != 0) {
+		ParseCmd(line_copy);
+	}
 
 	free(line);
 

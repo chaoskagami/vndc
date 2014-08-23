@@ -7,7 +7,7 @@
 class DataContainer {
 	public:
 		ContextManager* ctx;
-		bool if_fail = false;
+		int if_fail = 0;
 		bool wait_input = false;
 		char current_scr[400], current_music[400], current_bg[400];
 		int screen_w = 800;

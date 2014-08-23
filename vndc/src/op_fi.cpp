@@ -8,5 +8,5 @@
  */
 
 void op_fi() {
-	GetData()->if_fail = false;
+	GetData()->if_fail -= 1;
 }

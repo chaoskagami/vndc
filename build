@@ -5,6 +5,11 @@ SRC=$ROOT/
 LIB=$ROOT/external/lib
 BIN=$ROOT/bin
 
+mkdir $LIB
+mkdir $BIN
+
+CXXFLAGS=-g
+
 source mk
 
 INCLUDE="-I$ROOT/external/include/zero -I$ROOT/vndc/include"

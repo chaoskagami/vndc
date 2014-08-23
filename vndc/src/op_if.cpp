@@ -10,8 +10,10 @@
  */
 
 void op_if(char* var, int* op, int* val) {
-	if (GetData()->if_fail)
+	if (GetData()->if_fail > 0) {
+		GetData()->if_fail += 1;
 		return;
+	}
 
 	int var_val = GetData()->s_flags[0][std::string(var)];
 
