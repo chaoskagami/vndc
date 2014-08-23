@@ -8,7 +8,7 @@
  */
 
 void op_music(char* file) {
-	if (GetData()->if_fail || GetData()->ctx->GetQuit())
+	if (GetData()->if_fail != 0 || GetData()->ctx->GetQuit())
 		return;
 
 	memset(GetData()->current_music, 0, 400);

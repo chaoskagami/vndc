@@ -10,7 +10,7 @@
  */
 
 void op_if(char* var, int* op, int* val) {
-	if (GetData()->if_fail > 0) {
+	if (GetData()->if_fail != 0) {
 		GetData()->if_fail += 1;
 		return;
 	}
@@ -23,39 +23,27 @@ void op_if(char* var, int* op, int* val) {
 	switch (op[0]) {
 		case 0:
 			if ( !(var_val <= val[0]) )
-				GetData()->if_fail = true;
-			else
-				GetData()->if_fail = false;
+				GetData()->if_fail += 1;
 			break;
 		case 1:
 			if ( !(var_val < val[0]) )
-				GetData()->if_fail = true;
-			else
-				GetData()->if_fail = false;
+				GetData()->if_fail += 1;
 			break;
 		case 2:
 			if ( !(var_val == val[0]) )
-				GetData()->if_fail = true;
-			else
-				GetData()->if_fail = false;
+				GetData()->if_fail += 1;
 			break;
 		case 3:
 			if ( !(var_val != val[0]) )
-				GetData()->if_fail = true;
-			else
-				GetData()->if_fail = false;
+				GetData()->if_fail += 1;
 			break;
 		case 4:
 			if ( !(var_val > val[0]) )
-				GetData()->if_fail = true;
-			else
-				GetData()->if_fail = false;
+				GetData()->if_fail += 1;
 			break;
 		case 5:
 			if ( !(var_val >= val[0]) )
-				GetData()->if_fail = true;
-			else
-				GetData()->if_fail = false;
+				GetData()->if_fail += 1;
 			break;
 	}
 }

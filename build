@@ -8,7 +8,7 @@ BIN=$ROOT/bin
 mkdir $LIB
 mkdir $BIN
 
-CXXFLAGS=-g
+CXXFLAGS="-g -DGIT_REV=\"$(git rev-parse HEAD)\""
 
 source mk
 

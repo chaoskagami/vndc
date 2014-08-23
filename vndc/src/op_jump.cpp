@@ -10,7 +10,7 @@
  */
 
 void op_jump(char* file, int* lineTo, bool isSave) {
-	if (GetData()->if_fail)
+	if (GetData()->if_fail != 0)
 		return;
 	memset(GetData()->current_scr, 0, 400);
 	if(!isSave)

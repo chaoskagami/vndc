@@ -8,7 +8,7 @@
  */
 
 void op_sound(char* file, int* times) {
-	if (GetData()->if_fail || GetData()->ctx->GetQuit())
+	if (GetData()->if_fail != 0 || GetData()->ctx->GetQuit())
 		return;
 
 	// Fadeout not implemented yet.

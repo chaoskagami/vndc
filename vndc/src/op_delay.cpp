@@ -8,7 +8,7 @@
  */
 
 void op_delay(int* frames) {
-	if (GetData()->if_fail || GetData()->ctx->GetQuit())
+	if (GetData()->if_fail != 0 || GetData()->ctx->GetQuit())
 		return;
 	for(int i = 0; i < *frames; i++) {
 		// This is one frame.

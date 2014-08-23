@@ -8,7 +8,7 @@
  */
 
 void op_text(char* string) {
-	if (GetData()->if_fail || GetData()->ctx->GetQuit())
+	if (GetData()->if_fail != 0 || GetData()->ctx->GetQuit())
 		return;
 
 	// Search thru for vars and rebuild string.

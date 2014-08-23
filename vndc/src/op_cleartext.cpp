@@ -40,7 +40,7 @@ void ct_transwindow() {
  */
 
 void op_cleartext() {
-	if (GetData()->if_fail || GetData()->ctx->GetQuit())
+	if (GetData()->if_fail != 0 || GetData()->ctx->GetQuit())
 		return;
 
 	GetData()->text_x = GetData()->render_x1;

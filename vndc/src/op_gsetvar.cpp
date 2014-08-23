@@ -10,7 +10,7 @@
  */
 
 void op_gsetvar(char* var, int *modifier, int *value) {
-	if (GetData()->if_fail)
+	if (GetData()->if_fail != 0)
 		return;
 
 	if(*modifier == 0) {

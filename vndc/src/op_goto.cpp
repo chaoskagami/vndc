@@ -8,10 +8,10 @@
  */
 
 void op_goto(char* label) {
+	if (GetData()->if_fail != 0 || GetData()->ctx->GetQuit())
+		return;
 	FILE** infile = &(GetData()->accessScriptHandle);
 
-	if (GetData()->if_fail || GetData()->ctx->GetQuit())
-		return;
 	rewind(*infile);
 
 	char *line = (char*)calloc(sizeof(char), 400);

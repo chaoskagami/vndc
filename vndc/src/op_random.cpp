@@ -10,7 +10,7 @@
 bool seeded = false;
 
 void op_random(char* var, int* low, int* high) {
-	if (GetData()->if_fail)
+	if (GetData()->if_fail != 0)
 		return;
 	if (seeded == false)
 		srand(time(NULL));

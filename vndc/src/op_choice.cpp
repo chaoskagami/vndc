@@ -11,7 +11,7 @@
  */
 
 void op_choice(char* line) {
-	if (GetData()->if_fail)
+	if (GetData()->if_fail != 0)
 		return;
 	// Strtok by the pipe '|' character
 

@@ -13,9 +13,10 @@ void DebugTrap(int sig) {
 
 int main(int argc, char** argv) {
 	printf(" ___________________________________________________________ \n");
-	printf("| VNDC v0.0.1 - VNDC is Not a Direct Clone (of VNDS ;P)     |\n");
+	printf("| VNDC - VNDC is Not a Direct Clone (of VNDS ;P)            |\n");
 	printf("| Interprets VNDS scripts with a few goodies and extensions |\n");
 	printf("| (C) Jonathan Feldman 2014 - Under the MIT license         |\n");
+	printf("| git: %s             |\n", GIT_REV);
 	printf("|___________________________________________________________|\n\n");
 
 	char* chdir_to_dir = NULL;
