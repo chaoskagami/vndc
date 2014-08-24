@@ -4,26 +4,24 @@
 # I hate makefiles, and cmake so shell scripts work.
 
 CXX="g++"
-CXXFLAGS="$CXXFLAGS -fPIC -std=gnu++11 -Wall -Werror -Wno-error=pointer-arith"
+CXXFLAGS="$CXXFLAGS -std=gnu++11 -Wall -Werror -Wno-error=pointer-arith"
 LD="g++"
-LDFLAGS="$LDFLAGS -fPIC -L$LIB $LDFLAGS -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf"
+LDFLAGS="$LDFLAGS -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf"
 AR="ar rcs"
 GEN="/bin/bash ./gen.sh"
 
-CXX_CMD="$CXX $CXXFLAGS"
-LD_CMD="$LD $LDFLAGS"
 CA_CMD="$CXX $CXXFLAGS $LDFLAGS"
 
 FILES=$2
 
 function mkcc_ {
 	echo "CXX 		$2"
-	$CXX_CMD $INCLUDE -c $1 -o $2
+	$CXX $CXXFLAGS $INCLUDE -c $1 -o $2
 }
 
 function mkld_ {
 	echo "LD 		$2"
-	$LD_CMD $1 -o $2
+	$LD $LDFLAGS $CXXFLAGS $1 -o $2
 }
 
 function mkgen_ {
@@ -43,7 +41,7 @@ function mkmcc {
 
 function mkld {
 	echo "LD 		$1"
-	$LD_CMD ./*.o $LIB/*.a -o $BIN/$1
+	$LD $CXXFLAGS ./*.o $LDFLAGS -o $BIN/$1
 }
 
 function mkar {

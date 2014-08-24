@@ -113,4 +113,6 @@ int main(int argc, char** argv) {
 
 	delete GetData()->ctx;
 	delete GetData();
+
+	return 0;
 }
