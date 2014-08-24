@@ -10,5 +10,4 @@
 *.ttf
 
 # Prevent binary & lib dirs.
-bin
-external/lib
+./bin/
