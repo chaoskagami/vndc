@@ -1,5 +1,4 @@
-# Prevent object files and backups
-*.[oa]
+# No backups
 *~
 
 # Prevent all asset files.
