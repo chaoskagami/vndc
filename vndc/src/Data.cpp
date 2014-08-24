@@ -52,8 +52,3 @@ void DumpSave(char* fname) {
 
 	fclose(save_to);
 }
-void DumpSystemSave(char* fname) {
-	// A system save is simply a script
-	// with only gsetvar.
-	// It is automatically run if it exists
-}

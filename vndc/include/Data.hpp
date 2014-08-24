@@ -40,6 +40,5 @@ class DataContainer {
 DataContainer* GetData();
 void CreateDataContainer();
 void DumpSave(char* fname);
-void DumpSystemSave(char* fname);
 
 #endif
