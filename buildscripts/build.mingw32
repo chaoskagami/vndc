@@ -1,0 +1,35 @@
+#!/bin/bash
+
+##
+## Use this to build a 32bit windows binary.
+## At the moment, I haven't quite figured out static
+## linking yet.
+##
+
+
+ROOT=`pwd`
+SRC=$ROOT/
+LIB=$ROOT/external/lib/
+BIN=$ROOT/bin
+
+CXXFLAGS="-I$ROOT/external/deps/i686-w64-mingw32/include -DGIT_REV=\"$(git rev-parse HEAD)\""
+
+source buildscripts/mk
+
+LDFLAGS="-L$ROOT/external/deps/i686-w64-mingw32/lib -lmingw32 -lSDL2main -lSDL2  -lSDL2_mixer -lSDL2_image -lSDL2_ttf -Dmain=SDL_main -Wl,--no-undefined -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -static-libgcc -static-libstdc++"
+
+CXX=i686-w64-mingw32-g++
+LD=i686-w64-mingw32-g++
+
+# On windows ar doesn't really work
+
+INCLUDE="-I$ROOT/external/include/zero -I$ROOT/vndc/include"
+
+newtd
+	mkmcc		external/src/zero
+	mkmcc 		vndc/src
+	mkld		vndc.exe
+deltd
+
+# Windows static link is being derpy.
+cp external/deps/i686-w64-mingw32/bin/*.dll bin/

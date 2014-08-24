@@ -1,0 +1,24 @@
+#!/bin/bash
+
+##
+## Use this build script to build on
+## a unix system for the current unix
+## system. Linux, freebsd, openbsd, etc.
+##
+
+ROOT=`pwd`
+SRC=$ROOT/
+LIB=$ROOT/external/lib
+BIN=$ROOT/bin
+
+CXXFLAGS="-DGIT_REV=\"$(git rev-parse HEAD)\""
+
+source buildscripts/mk
+
+INCLUDE="-I$ROOT/external/include/zero -I$ROOT/vndc/include"
+
+newtd
+	mkmcc		external/src/zero
+	mkmcc 		vndc/src
+	mkld		vndc.`uname -m`
+deltd

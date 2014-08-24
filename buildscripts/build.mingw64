@@ -1,13 +1,19 @@
 #!/bin/bash
 
+##
+## Use this to build a 64bit windows binary.
+## At the moment, I haven't quite figured out static
+## linking yet.
+##
+
+
 ROOT=`pwd`
 SRC=$ROOT/
-LIB=$ROOT/external/lib/
 BIN=$ROOT/bin
 
 CXXFLAGS="-I$ROOT/external/deps/x86_64-w64-mingw32/include -DGIT_REV=\"$(git rev-parse HEAD)\""
 
-source mk
+source buildscripts/mk
 
 LDFLAGS="-L$ROOT/external/deps/x86_64-w64-mingw32/lib -lmingw32 -lSDL2main -lSDL2  -lSDL2_mixer -lSDL2_image -lSDL2_ttf -Dmain=SDL_main -Wl,--no-undefined -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -static-libgcc -static-libstdc++"
 
