@@ -8,7 +8,7 @@ TextManager::TextManager(ContextManager* ct) {
 		exit(-8);
 	}
 
-	LoadFont((char*)"default.ttf");
+	LoadFont((char*)"default.ttf", 20);
 
 	color.r = 255;
 	color.g = 255;
@@ -28,13 +28,13 @@ TextManager::~TextManager() {
 	TTF_Quit();
 }
 
-int TextManager::LoadFont(char* fname) {
+int TextManager::LoadFont(char* fname, int size) {
 
 	++fonts_loaded;
 
 	fonts = (TTF_Font**)realloc(fonts, sizeof(TTF_Font*) * fonts_loaded);
 
-	if ( !(fonts[fonts_loaded - 1] = TTF_OpenFont(fname, 20) ) ) {
+	if ( !(fonts[fonts_loaded - 1] = TTF_OpenFont(fname, size) ) ) {
 		printf("Font Open Failed. Load attempt: %s. Msg: %s\n", fname, TTF_GetError());
 	}
 
@@ -127,4 +127,9 @@ void TextManager::SetColor(int r, int g, int b, int a)
 	color.g = g;
 	color.b = b;
 	color.a = a;
+}
+
+void TextManager::SetFontUsed(int index)
+{
+	current_font = index;
 }

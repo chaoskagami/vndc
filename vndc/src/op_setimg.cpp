@@ -4,7 +4,7 @@
 
 /*
  * Implements setimg vnds function.
- * bgload file x y
+ * setimg file x y
  */
 
 void op_setimg(char* file, int* x, int* y) {
@@ -21,7 +21,13 @@ void op_setimg(char* file, int* x, int* y) {
 	// Load displayable.
 	UDisplayable* fg_add = new UDisplayable(GetData()->ctx, Normal, path);
 
-	fg_add->SetXY(*x, *y);
+	// Centered NDS adapted
+	double adp_x = ((double)x[0]) * (GetData()->screen_w / 256);
+	double adp_y = ((double)y[0]) * (GetData()->screen_h / 192);
+	fg_add->SetXY((int)adp_x, (int)adp_y);
+
+	// Raw
+	// fg_add->SetXY(x[0], y[0]);
 
 	fg_add->Blit();
 

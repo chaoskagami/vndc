@@ -55,7 +55,11 @@ void Setup() {
 	GetData()->s_flags = new std::map<std::string, int>();
 	GetData()->g_flags = new std::map<std::string, int>();
 
-	GetData()->ctx->Text()->Outline(2);
+	// Font
+	GetData()->ctx->Text()->LoadFont((char*)"default.ttf", 24);
+	GetData()->ctx->Text()->SetFontUsed(1);
+
+	GetData()->ctx->Text()->Outline(1);
 	GetData()->ctx->Text()->SetColor(255,255,255,255);
 
 	op_cleartext();

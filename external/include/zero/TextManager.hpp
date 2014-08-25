@@ -6,7 +6,7 @@ class TextManager {
 		~TextManager();
 
 		// Base font functions.
-		int LoadFont(char* fname);
+		int LoadFont(char* fname, int size);
 		void Render(char* text);
 		void Render(char* text, int x, int y);
 
@@ -15,7 +15,7 @@ class TextManager {
 
 		// Property functions.
 		// void SetStyle(int style);
-		// void SetFontUsed(int font);
+		void SetFontUsed(int font);
 		void SetColor(int r, int g, int b, int a);
 
 		// Complex functions.

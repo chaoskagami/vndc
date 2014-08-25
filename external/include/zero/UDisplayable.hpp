@@ -28,6 +28,9 @@ typedef enum {
 			int GetXI();
 			int GetYI();
 
+			int GetW();
+			int GetH();
+
 			void Blit();
 
 			int* GetHitbox();

@@ -225,6 +225,22 @@
 		return this->loc.y;
 	}
 
+	// Get Width
+
+	int UDisplayable::GetW() {
+		if (Error)
+			return 0;
+		return this->bmp_w;
+	}
+
+	// Get Height
+
+	int UDisplayable::GetH() {
+		if (Error)
+			return 0;
+		return this->bmp_h;
+	}
+
 	// Blit to an associated context.
 
 	void UDisplayable::Blit() {
