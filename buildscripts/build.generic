@@ -10,15 +10,15 @@ ROOT=`pwd`
 SRC=$ROOT/
 LIB=$ROOT/external/lib
 BIN=$ROOT/bin
-
-CXXFLAGS="-g -DGIT_REV=\"$(git rev-parse HEAD)\""
+CXXFLAGS="-DGIT_REV=\"$(git rev-parse HEAD)\""
 
 source buildscripts/mk
 
-INCLUDE="-I$ROOT/external/include/zero -I$ROOT/vndc/include"
+LDFLAGS="`pkg-config sdl2 --libs-only-l --libs-only-L` `pkg-config SDL2_image --libs-only-l --libs-only-L` `pkg-config SDL2_ttf --libs-only-l --libs-only-L` `pkg-config SDL2_mixer --libs-only-l --libs-only-L`"
+INCLUDE="-I$ROOT/external/zero/include -I$ROOT/external/out/include -I$ROOT/vndc/include"
 
 newtd
-	mkmcc		external/src/zero
+	mkmcc		external/zero/src
 	mkmcc 		vndc/src
 	mkld		vndc.`uname -m`
 deltd

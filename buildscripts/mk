@@ -3,12 +3,11 @@
 # This is all auxillary functions to simplify the build script.
 # I hate makefiles, and cmake so shell scripts work.
 
-CXX="g++"
+CXX="${CROSS}-g++"
 CXXFLAGS="$CXXFLAGS -std=gnu++11 -Wall -Werror -Wno-error=pointer-arith"
-LD="g++"
+LD="${CROSS}-g++"
 LDFLAGS="$LDFLAGS -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf"
-AR="ar rcs"
-GEN="/bin/bash ./gen.sh"
+AR="${CROSS}-ar rcs"
 
 CA_CMD="$CXX $CXXFLAGS $LDFLAGS"
 
@@ -22,11 +21,6 @@ function mkcc_ {
 function mkld_ {
 	echo "LD 		$2"
 	$LD $LDFLAGS $CXXFLAGS $1 -o $2
-}
-
-function mkgen_ {
-	echo "GEN		$1"
-	bash -c "cd ../$1 && $GEN"
 }
 
 function mkcc {

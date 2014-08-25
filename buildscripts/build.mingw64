@@ -11,24 +11,19 @@ ROOT=`pwd`
 SRC=$ROOT/
 BIN=$ROOT/bin
 
-CXXFLAGS="-I$ROOT/external/deps/x86_64-w64-mingw32/include -DGIT_REV=\"$(git rev-parse HEAD)\""
+CXXFLAGS="-I$ROOT/external/Windows/x86_64-w64-mingw32/include -DGIT_REV=\"$(git rev-parse HEAD)\""
+
+CROSS=x86_64-w64-mingw32
 
 source buildscripts/mk
 
-LDFLAGS="-L$ROOT/external/deps/x86_64-w64-mingw32/lib -lmingw32 -lSDL2main -lSDL2  -lSDL2_mixer -lSDL2_image -lSDL2_ttf -Dmain=SDL_main -Wl,--no-undefined -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -static-libgcc -static-libstdc++"
-
-CXX=x86_64-w64-mingw32-g++
-LD=x86_64-w64-mingw32-g++
-
-# On windows ar doesn't really work
-
-INCLUDE="-I$ROOT/external/include/zero -I$ROOT/vndc/include"
+LDFLAGS="-L$ROOT/external/Windows/x86_64-w64-mingw32/lib -lmingw32 -lSDL2main -lSDL2  -lSDL2_mixer -lSDL2_image -lSDL2_ttf -Dmain=SDL_main -Wl,--no-undefined -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -static-libgcc -static-libstdc++"
+INCLUDE="-I$ROOT/external/zero/include -I$ROOT/vndc/include"
 
 newtd
-	mkmcc		external/src/zero
+	mkmcc		external/zero/src
 	mkmcc 		vndc/src
 	mkld		vndc.exe
 deltd
 
-# Windows static link is being derpy.
-cp external/deps/x86_64-w64-mingw32/bin/*.dll bin/
+cp external/Windows/x86_64-w64-mingw32/bin/*.dll bin/

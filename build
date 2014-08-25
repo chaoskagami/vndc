@@ -8,15 +8,14 @@ elif [ "$1" == "mingw64" ]; then
 	buildscripts/build.mingw64
 elif [ "$1" == "linux" ]; then
 	buildscripts/build.generic
-elif [ "$1" == "linux32" ]; then
-	buildscripts/build.x86_64-m32
 elif [ "$1" == "generic" ]; then
 	buildscripts/build.generic
 elif [ "$1" == "clean" ]; then
 	rm -rf bin
 	echo "Removed bin directory."
 else
-	echo "Targets: mingw32, mingw64, linux, linux32, generic"
+	echo "Targets: mingw32, mingw64, linux, generic"
+	echo "linux32 target was removed. Build in a chroot."
 	echo "Operations: clean"
 fi
 
