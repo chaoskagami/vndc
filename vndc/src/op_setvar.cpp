@@ -19,7 +19,7 @@ void op_setvar(char* var, int* modifier, char* value) {
 	else
 		ret = sscanf(value, "%d", &value_r);
 
-	if(ret == 0) { // value is a variable not a number
+	if(ret == 0 && GetData()->vndc_enabled) { // value is a variable not a number
 		if(*modifier == 0) {
 			GetData()->s_flags[0][std::string(var)] = GetData()->s_flags[0][std::string(value)];
 		}
