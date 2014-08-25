@@ -23,17 +23,11 @@ void op_sound(char* file, int* times) {
 	// set - e.g. the sound was a voice as well, we stop the previous
 	// sound before playing this one.
 
-	if(GetData()->vndc_enabled &&
-	   (GetData()->next_line[6] == '"' ||
+	if(GetData()->vndc_enabled &&         // 0 1 2 3 4 5
+	   (GetData()->next_line[5] == '"' || // t e x t   "
 	    GetData()->next_line[strlen(GetData()->next_line) - 1] == '"')) {
-		if(GetData()->is_spoken_line == true) {
-			GetData()->ctx->Audio()->FlushSfx();
-		}
-		GetData()->is_spoken_line = true;
+		GetData()->ctx->Audio()->FlushSfx();
 	}
-	else
-		GetData()->is_spoken_line = false;
-
 
 	// Play command
 	int count = 1;

@@ -33,13 +33,16 @@ void op_text(char* string) {
 
 		TextManager* txt = GetData()->ctx->Text();
 
-		int xloc = ( GetData()->screen_w - txt->TestLen(string) - GetData()->render_x1 );
+		int xloc = ( GetData()->screen_w - (txt->TestLen(string) + GetData()->render_x1) );
 		
 		txt->Render(string, xloc, GetData()->render_y1);
 
+		GetData()->wait_input = true;
 		Wait();
 
 		op_cleartext();
+
+		return;
 	}
 	// Wait for input, then blank
 	if(!strcmp(string, "!")) {
