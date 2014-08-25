@@ -28,7 +28,7 @@ class DataContainer {
 		FILE* accessScriptHandle = NULL;
 		char** main_scr; // Default value.
 		bool vndc_enabled = true;
-		bool is_spoken_line = false;
+		bool quote_incomplete = false;
 		bool debug_mode = false;
 		bool debug_to_shell = false;
 		bool verbose = false;

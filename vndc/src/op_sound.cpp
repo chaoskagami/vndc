@@ -25,8 +25,21 @@ void op_sound(char* file, int* times) {
 
 	if(GetData()->vndc_enabled &&         // 0 1 2 3 4 5
 	   (GetData()->next_line[5] == '"' || // t e x t   "
-	    GetData()->next_line[strlen(GetData()->next_line) - 1] == '"')) {
+	    GetData()->next_line[strlen(GetData()->next_line) - 1] == '"' ||
+		GetData()->quote_incomplete)) {
 		GetData()->ctx->Audio()->FlushSfx();
+
+		if(GetData()->next_line[5] == '"' &&
+		   !(GetData()->next_line[strlen(GetData()->next_line) - 1] == '"')) {
+			// Quote is incomplete.
+			GetData()->quote_incomplete = true;
+		}
+
+		if(GetData()->next_line[strlen(GetData()->next_line) - 1] == '"' &&
+		   !(GetData()->next_line[5] == '"')) {
+			GetData()->quote_incomplete = false;
+		}
+
 	}
 
 	// Play command
