@@ -24,7 +24,7 @@ void op_cleartext();
 void op_delay(int* frames);
 void op_fi();
 void op_gsetvar(char* var, int *modifier, char *value);
-void op_if(char* var, int* op, int* val);
+void op_if(char* left, int* op, char* right);
 void op_music(char* file);
 void op_random(char* var, int* low, int* high);
 void op_setimg(char* file, int* x, int* y);

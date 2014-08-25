@@ -117,8 +117,7 @@ void ParseCmd(char* line) {
 		else if(!strcmp(tokens[2], ">="))
 			value_1 = 5;
 
-		sscanf(tokens[3], "%d", &value_2);
-		op_if(tokens[1], &value_1, &value_2);
+		op_if(tokens[1], &value_1, tokens[3]);
 	}
 	else if(!strcmp(tokens[0], "fi"))
 		op_fi();
@@ -165,7 +164,7 @@ void ParseShell() {
 
 		if(!strcmp(buffer, "help") || strlen(buffer) < 1) {
 			printf("%s\n", "Commands available:");
-			printf("\t%s\t\t\t%s\n", "(debug) stop", "Stops debug mode");
+			printf("\t%s\t\t\t%s\n", "(debug) resume", "Stops debug mode");
 			printf("\t%s\t\t\t%s\n", "(debug) quit", "Quits game");
 			printf("\t%s\t\t%s\n", "(debug) save [file]", "Saves immediately to file");
 			printf("\t%s\t%s\n", "setvar [var] [mod] [val]", "Set save flag");
@@ -189,7 +188,7 @@ void ParseShell() {
 			GetData()->ctx->SetQuit();
 			DebugContinue = false;
 		}
-		else if (!strcmp(buffer, "stop")) {
+		else if (!strcmp(buffer, "resume")) {
 			printf("[debug] Exiting debug shell and resuming.\n");
 			DebugContinue = false;
 			GetData()->wait_input = true;
@@ -234,6 +233,12 @@ void Parse() {
 			line_copy[i] = '\0';
 	}
 
+	// The next line is null, because the file is finished.
+	if(feof(GetData()->accessScriptHandle) && strlen(GetData()->next_line) == 0) {
+		// We've reached EOF. Jump back and return.
+		op_jump(GetData()->main_scr[0], NULL, true);
+	}
+
 	GetData()->next_line = (char*)calloc(sizeof(char), 400);
 	fgets(GetData()->next_line, 400, GetData()->accessScriptHandle);
 
@@ -245,12 +250,6 @@ void Parse() {
 	free(line);
 
 	// Load the next line.
-
-	// The next line is null, because the file is finished.
-	if(feof(GetData()->accessScriptHandle) && strlen(GetData()->next_line) == 0) {
-		// We've reached EOF. Jump back and return.
-		op_jump(GetData()->main_scr[0], NULL, true);
-	}
 
 	return;
 }

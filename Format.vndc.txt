@@ -22,7 +22,7 @@ Contents.
 	13m. text
 	14n. debug commands
 		14n1. help
-		14n2. stop
+		14n2. resume
 		14n3. quit
 		14n4. save
 	15o. Save format
@@ -116,17 +116,18 @@ Note that I am a bit smarter than vnds here. if and fi
 CAN be embedded. So this is valid:
 
 	if selected == 2
-	if previous >= 5
-	text 'You win!'
-	fi
-	if previous <= 5
-	text 'You lose!'
-	fi
+		if previous >= 5
+			text 'You win!'
+		fi
+		if previous <= 5
+			text 'You lose!'
+		fi
 	fi
 
 The behavior of VNDS would be to 'if previous <= 5' on
 failure of selected == 2 This is really not proper:
-I keep an if-count instead of an in-if value.
+vnds just jumps. I keep an if-count instead of
+an in-if bool value.
 
 = 6f. ================================================
 
@@ -147,10 +148,11 @@ jump transfers control to another script file:
 
 My implementation provides an extra form of jump:
 
-	jump script line
+	jump script [line]
 
 Which goes directly to line in the file. This
-is utilized for saving.
+is utilized for saving. As such, you can't
+turn off that extension. Period.
 
 = 8h. ================================================
 
@@ -184,7 +186,8 @@ position specified.
 
 setvar and gsetvar are used to set variables. gsetvar
 specifically sets the 'global' state, that is, common
-to all saves.
+to all saves. In my implementation - that is moot.
+Thus, gsetvar just calls setvar.
 
 	[g]setvar var mod value
 
@@ -204,7 +207,15 @@ vnds, but typically at the beginning.
 
 	setvar ~ ~
 
-Which means reset all vars.
+Which means reset all vars. This ignores globals -
+e.g. prefixed with a lowercase 'g'.
+
+As well, my extension provides the ability to set
+a variable to another variable.
+
+	[g]setvar var op var2
+
+Again, this only works in extensions mode.
 
 = 12l. ===============================================
 
@@ -240,12 +251,14 @@ I don't know why, but there are:
 I've implemented a few extensions that help generally
 with NVL games.
 
-	--- 			- At the beginning of a line,
+	---				- At the beginning of a line,
 					  clears before text output.
-	"				- More on this once finished.
-					  Will stop any previous sfx
-					  if encountered. 'smart'
-					  voice stop.
+	"				- In the sound function
+					  if lookahead finds a text
+					  with quotes, it's assumed
+					  that sound is a voice and
+					  linked to the text. AKA
+					  smart voice stopping.
 
 = 14n. ===============================================
 
@@ -258,9 +271,9 @@ start it from a console. Send it a SIGINT (^C).
 The console should now prompt you with this;
 	[scr command] $
 
-You can enter any command above; I recommend against
-entering choice, since it can't possibly work in
-this mode. if may also not work as expected.
+You can enter any command above; Some won't work
+right. choice, if, and jump probably won't work
+properly.
 
 No commands run in this state will advance the
 program, but flags set will affect it.
@@ -271,9 +284,9 @@ help will print everything available.
 
 = 14n2. ==============================================
 
-stop will disable debugging and kill the console.
-You can SIGINT again at any point to come back
-to the debug state.
+resume (renamed from stop) will disable debugging
+and kill the console. You can SIGINT again at any
+point to come back to the debug state.
 
 = 14n3. ==============================================
 
