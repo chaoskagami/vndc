@@ -58,6 +58,8 @@ void op_choice(char* line) {
 		strncpy(varname, "selected", 400);
 	}
 
+	op_cleartext();
+
 	// For each choice, we need to print text and make a click area. This will use the text function.
 	int *choices = (int*)calloc(sizeof(int), num * 2);
 

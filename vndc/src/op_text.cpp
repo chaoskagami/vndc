@@ -22,20 +22,24 @@ void op_text(char* string) {
 
 	// Improvised linebreak. Also, an extension.
 	if(GetData()->vndc_enabled && string[1] == '-' && string[2] == '-' && string[3] == '-') {
-			op_cleartext();
+		op_cleartext();
 	}
-	// Improvised voice detect. Extension.
-	// This is based on toggling.
-	// If the quote is incomplete, it will be stopped on end.
-	// If not, it will continue voice until the next quoted line.
-	if(GetData()->vndc_enabled) {
-		GetData()->is_spoken_line = false;
+	// Improvised Tag display. Extension.
+	if(GetData()->vndc_enabled && string[0] == '<' && string[strlen(string)-1] == '>') {
+		string[strlen(string)-1] = '\0';
+		string = &string[1];
+		
+		GetData()->ctx->ClearOverlay();
 
-		int quotes = 0;
-		for(int i=0; i < (int)strlen(string); i++) {
-			if(string[i] == '"') quotes++;
-		}
-		if(quotes > 0) GetData()->is_spoken_line = true;
+		TextManager* txt = GetData()->ctx->Text();
+
+		int xloc = ( GetData()->screen_w - txt->TestLen(string) - GetData()->render_x1 );
+		
+		txt->Render(string, xloc, GetData()->render_y1);
+
+		Wait();
+
+		op_cleartext();
 	}
 	// Wait for input, then blank
 	if(!strcmp(string, "!")) {

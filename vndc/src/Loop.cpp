@@ -9,7 +9,7 @@ void Wait() {
 	// If the line is spoken, then halt previous spoken lines.
 	// If the skip key is held, just gogogo
 
-	bool stop_voice = GetData()->wait_input && GetData()->vndc_enabled;
+	// bool stop_voice = GetData()->wait_input && GetData()->vndc_enabled && GetData()->is_spoken_line;
 
 	while((GetData()->wait_input && !GetData()->ctx->GetQuit())) {
 		GetData()->ctx->Input();
@@ -21,10 +21,6 @@ void Wait() {
 
 		if(GetData()->ctx->GetInput(1)) break;
 	}
-
-	if(stop_voice)
-		op_sound((char*)"~", NULL);
-
 }
 
 void Loop() {

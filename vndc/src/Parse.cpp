@@ -221,33 +221,42 @@ void Parse() {
 		exit(-8);
 	}
 
-	char *line = (char*)calloc(sizeof(char), 400);
+	// Load the next line to this one.
+	char* line = GetData()->next_line;
 
-	fgets(line, 400, GetData()->accessScriptHandle);
+	if(line == NULL) {
+		// We've reached EOF.
+		op_jump(GetData()->main_scr[0], NULL, true);
+	}
 
-	char* line_copy = line;
+	GetData()->next_line = (char*)calloc(sizeof(char), 400);
+	// Load the next line.
+	fgets(GetData()->next_line, 400, GetData()->accessScriptHandle);
+
+	char* line_copy = GetData()->next_line;
 
 	while(line_copy[0] == ' ' || line_copy[0] == '\t') {
 		line_copy[0] = '\0';
 		line_copy = &line_copy[1];
 	}
 
-	// Remove all '\n' from this string
+	// Remove all '\n' from the buffer line
 	for(int i=0; i < (int)strlen(line_copy); i++) {
 		if (line_copy[i] == '\n')
 			line_copy[i] = '\0';
 	}
 
-	//printf("%lu\n", strlen(line_copy));
-
-	if(strlen(line_copy) != 0) {
-		ParseCmd(line_copy);
+	// Execute the current line.
+	if(strlen(line) != 0) {
+		ParseCmd(line);
 	}
 
 	free(line);
 
+	// The next line is null, because the file is finished.
 	if(feof(GetData()->accessScriptHandle)) {
-		op_jump(GetData()->main_scr[0], NULL, true);
+		free(GetData()->next_line);
+		GetData()->next_line = NULL;
 	}
 
 	return;

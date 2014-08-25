@@ -35,6 +35,8 @@ class DataContainer {
 		int currentLine = 0;
 		bool skip_key_on = false;
 		char* window_name;
+		char* next_line = NULL; // Used for voice-detect.
+					// It's impossible to parse without lookahead.
 };
 
 DataContainer* GetData();

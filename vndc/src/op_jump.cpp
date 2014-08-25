@@ -44,4 +44,22 @@ void op_jump(char* file, int* lineTo, bool isSave) {
 	else {
 		GetData()->currentLine = 0;
 	}
+
+	// Read the first line into next_line.
+	GetData()->next_line = (char*)calloc(sizeof(char), 400);
+	// Load the next line.
+	fgets(GetData()->next_line, 400, GetData()->accessScriptHandle);
+
+	char* line_copy = GetData()->next_line;
+
+	while(line_copy[0] == ' ' || line_copy[0] == '\t') {
+		line_copy[0] = '\0';
+		line_copy = &line_copy[1];
+	}
+
+	// Remove all '\n' from the buffer line
+	for(int i=0; i < (int)strlen(line_copy); i++) {
+		if (line_copy[i] == '\n')
+			line_copy[i] = '\0';
+	}
 }
