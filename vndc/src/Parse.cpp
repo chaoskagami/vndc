@@ -86,7 +86,7 @@ void ParseCmd(char* line) {
 
 
 			sscanf(tokens[3], "%d", &value_2);
-			op_setvar(tokens[1], &value_1, &value_2);
+			op_setvar(tokens[1], &value_1, tokens[3]);
 		}
 		else {
 			value_1 = -2;
@@ -101,8 +101,7 @@ void ParseCmd(char* line) {
 		else if(!strcmp(tokens[2], "-"))
 			value_1 = -1;
 
-		sscanf(tokens[3], "%d", &value_2);
-		op_gsetvar(tokens[1], &value_1, &value_2);
+		op_gsetvar(tokens[1], &value_1, tokens[3]);
 	}
 	else if(!strcmp(tokens[0], "if")) {
 		if(!strcmp(tokens[2], "<="))

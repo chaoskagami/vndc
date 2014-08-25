@@ -39,7 +39,8 @@ void DumpSave(char* fname) {
 	if(!data_vals.empty()) {
 		std::map<std::string, int>::iterator item = data_vals.begin();
 		while(item != data_vals.end()) {
-			fprintf(save_to, "setvar %s = %d\n", item->first.c_str(), item->second);
+			if(strcmp(item->first.c_str(), "selected"))
+				fprintf(save_to, "setvar %s = %d\n", item->first.c_str(), item->second);
 
 			++item;
 		}

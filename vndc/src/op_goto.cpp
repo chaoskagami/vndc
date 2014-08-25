@@ -23,7 +23,7 @@ void op_goto(char* label) {
 		line_to++;
 		fgets(line, 400, *infile);
 
-	// Remove all '\n' from this string
+		// Remove all '\n' from this string
 		for(int i=0; i < 400; i++) {
 			if (line[i] == '\n')
 				line[i] = '\0';

@@ -10,10 +10,17 @@
  * Also, for now I simply redirect to setvar. Global values are only set
  * by definition on an end-game event for replays, so when the interpreter hits
  * 'the end' it loops back to the title.
- * So setting local vars is okay, since they'll be reloaded across playthrus.
+ *
+ * As an exception, setvar ~ ~ will ignore all vars prefixed with g
+ * because these are globals.
+ *
+ * You can set global vars with setvar because my implementation just
+ * works different here, but still.
+ *
+ * Any local vars will obviously be nuked by setvar ~ ~.
  */
 
-void op_gsetvar(char* var, int *modifier, int *value) {
+void op_gsetvar(char* var, int *modifier, char *value) {
 	if (GetData()->if_fail != 0)
 		return;
 
