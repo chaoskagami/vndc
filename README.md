@@ -3,17 +3,17 @@ vndc - VNDC is Not a Direct Clone (of VNDS ;P)
 
 tl;dr
 
-Install SDL2, SDL2_mixer, SDL_image, SDL_ttf. Run ./build in the source dir.
+Install SDL2, SDL2_mixer, SDL_image, SDL_ttf if running a unix. Run ./build in the source dir for targets. Choose the appropriate one.
 
-You should get a binary named vndc in bin. Run vndc -h if you don't know how to run it. Have VNDS files ready.
+You should get a binary named vndc.something in bin. Run vndc -h if you don't know how to run it. Have VNDS files ready. This includes foreground, sound, background, script, and default.ttf
 
-Important: Unzip zips first.
+Also important: Unzip zips first.
 
 -----
 
-A picture says a thousand words. Have a Sakura.
+A picture says a thousand words. Have one.
 
-![Screenie](https://raw.github.com/chaoskagami/vndc/data/screenshot.png)
+![Screenie of Current State](https://raw.github.com/chaoskagami/vndc/data/screenshot.png)
 
 This is a clone of vnds. Actually, it's an enhanced (in my opinion) version.
 
