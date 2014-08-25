@@ -11,7 +11,7 @@ SRC=$ROOT/
 LIB=$ROOT/external/lib
 BIN=$ROOT/bin
 
-CXXFLAGS="-DGIT_REV=\"$(git rev-parse HEAD)\""
+CXXFLAGS="-g -DGIT_REV=\"$(git rev-parse HEAD)\""
 
 source buildscripts/mk
 

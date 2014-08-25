@@ -142,8 +142,6 @@ void ParseCmd(char* line) {
 	}
 	else if(!strcmp(tokens[0], "goto"))
 		op_goto(tokens[1]);
-	else if(!strcmp(tokens[0], "label")) {}
-		// Nuthin.
 	else if(!strcmp(tokens[0], "cleartext"))
 		op_cleartext();
 
@@ -224,16 +222,7 @@ void Parse() {
 	// Load the next line to this one.
 	char* line = GetData()->next_line;
 
-	if(line == NULL) {
-		// We've reached EOF.
-		op_jump(GetData()->main_scr[0], NULL, true);
-	}
-
-	GetData()->next_line = (char*)calloc(sizeof(char), 400);
-	// Load the next line.
-	fgets(GetData()->next_line, 400, GetData()->accessScriptHandle);
-
-	char* line_copy = GetData()->next_line;
+	char* line_copy = line;
 
 	while(line_copy[0] == ' ' || line_copy[0] == '\t') {
 		line_copy[0] = '\0';
@@ -246,17 +235,22 @@ void Parse() {
 			line_copy[i] = '\0';
 	}
 
+	GetData()->next_line = (char*)calloc(sizeof(char), 400);
+	fgets(GetData()->next_line, 400, GetData()->accessScriptHandle);
+
 	// Execute the current line.
-	if(strlen(line) != 0) {
-		ParseCmd(line);
+	if(strlen(line_copy) != 0) {
+		ParseCmd(line_copy);
 	}
 
 	free(line);
 
+	// Load the next line.
+
 	// The next line is null, because the file is finished.
-	if(feof(GetData()->accessScriptHandle)) {
-		free(GetData()->next_line);
-		GetData()->next_line = NULL;
+	if(feof(GetData()->accessScriptHandle) && strlen(GetData()->next_line) == 0) {
+		// We've reached EOF. Jump back and return.
+		op_jump(GetData()->main_scr[0], NULL, true);
 	}
 
 	return;

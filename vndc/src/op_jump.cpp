@@ -5,13 +5,12 @@
 /*
  * Implements jump vnds function.
  * jump file
- * The parser actually does most of the work. This
- * just kind of gives it a nudge ans says 'reload k'
  */
 
 void op_jump(char* file, int* lineTo, bool isSave) {
 	if (GetData()->if_fail != 0)
 		return;
+
 	memset(GetData()->current_scr, 0, 400);
 	if(!isSave)
 		snprintf(GetData()->current_scr, 400, "script/%s", file);
@@ -30,6 +29,7 @@ void op_jump(char* file, int* lineTo, bool isSave) {
 	GetData()->accessScriptHandle = fopen(GetData()->current_scr, "r");
 	if(GetData()->accessScriptHandle == NULL) {
 		printf("[error] Failed to open script file %s.\n", GetData()->current_scr);
+		exit(-1);
 	}
 
 
@@ -50,16 +50,4 @@ void op_jump(char* file, int* lineTo, bool isSave) {
 	// Load the next line.
 	fgets(GetData()->next_line, 400, GetData()->accessScriptHandle);
 
-	char* line_copy = GetData()->next_line;
-
-	while(line_copy[0] == ' ' || line_copy[0] == '\t') {
-		line_copy[0] = '\0';
-		line_copy = &line_copy[1];
-	}
-
-	// Remove all '\n' from the buffer line
-	for(int i=0; i < (int)strlen(line_copy); i++) {
-		if (line_copy[i] == '\n')
-			line_copy[i] = '\0';
-	}
 }
