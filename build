@@ -16,10 +16,13 @@ elif [ "$1" == "clean" ]; then
 	rm -rf bin
 	echo "RM		bin"
 	cd external/Android
-	echo "NDK-CLEAN        external/Android"
+	echo "NDK-CLEAN	external/Android"
 	ndk-build clean > /dev/null
-	echo "ANT-CLEAN        external/Android"
+	echo "ANT-CLEAN	external/Android"
 	ant clean > /dev/null
+	echo "RM		external/Android/jni/src/*.{cpp,hpp}"
+	rm jni/src/*.hpp
+	rm jni/src/*.cpp
 	cd ../../
 else
 	echo "Targets: mingw32, mingw64, linux, generic"
