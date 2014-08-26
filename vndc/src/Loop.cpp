@@ -39,7 +39,7 @@ void Loop() {
 
 void Setup() {
 	// Init window
-	GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, false, true);
+	GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, false, !(GetData()->sw_rendering));
 
 	GetData()->window_name = (char*)calloc(sizeof(char), 400);
 	sprintf(GetData()->window_name, "%s", "VNDC Interpreter ");

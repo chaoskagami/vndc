@@ -29,13 +29,12 @@ op_text.cpp \
 Data.cpp \
 Loop.cpp \
 Parse.cpp \
-VNDC.cpp \
 AudioManager.cpp \
 ContextManager.cpp \
 TextManager.cpp \
-UDisplayable.cpp
-
-
+UDisplayable.cpp \
+../SDL/src/main/android/SDL_android_main.c \
+VNDC.cpp
 
 
 LOCAL_SHARED_LIBRARIES := SDL2 SDL2_mixer SDL2_ttf SDL2_image

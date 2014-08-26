@@ -74,12 +74,6 @@ void TextManager::Render(char* text, int x, int y) {
 		TTF_SetFontOutline(fonts[current_font], 0);
 	}
 
-	SDL_Texture *tmp1 = NULL, *tmp2 = NULL;
-
-	tmp1 = SDL_CreateTextureFromSurface(ctx->Renderer(), sf1);
-	if(outline)
-		tmp2 = SDL_CreateTextureFromSurface(ctx->Renderer(), sf2);
-
 	SDL_Rect src, dst, src2, dst2;
 	src.x = 0;
 	src.y = 0;
@@ -101,14 +95,30 @@ void TextManager::Render(char* text, int x, int y) {
 		dst2.y = y - (outline_px);
 		dst2.w = src2.w;
 		dst2.h = src2.h;
-		SDL_FreeSurface(sf2);
+	}
+	
+	if(ctx->Accelerated()) {
+		SDL_Texture *tmp1 = NULL, *tmp2 = NULL;
+
+		tmp1 = SDL_CreateTextureFromSurface(ctx->Renderer(), sf1);
+		if(outline)
+			tmp2 = SDL_CreateTextureFromSurface(ctx->Renderer(), sf2);
+
 		ctx->OverlayBlit(tmp2, &src2, &dst2);
+		ctx->OverlayBlit(tmp1, &src, &dst);
+
 		SDL_DestroyTexture(tmp2);
+		SDL_DestroyTexture(tmp1);
+
+	}
+	else {
+		ctx->OverlayBlit(sf2, &src, &dst);
+		ctx->OverlayBlit(sf1, &src, &dst);
 	}
 
+	SDL_FreeSurface(sf2);
 	SDL_FreeSurface(sf1);
-	ctx->OverlayBlit(tmp1, &src, &dst);
-	SDL_DestroyTexture(tmp1);
+
 
 }
 

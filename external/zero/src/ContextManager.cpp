@@ -89,7 +89,8 @@
 		}
 		else {
 			_InitWindowSW(width, height, fulls);
-			this->surface_o = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+			this->surface_o = SDL_CreateRGBSurface(0, width, height, 32, RED_MASK, GREEN_MASK, BLUE_MASK, ALPHA_MASK);
+			SDL_SetSurfaceBlendMode(this->surface_o, SDL_BLENDMODE_BLEND);
 		}
 
 		txtMgr = new TextManager(this);
@@ -97,7 +98,10 @@
 
 	void ContextManager::_InitWindowSW(int width, int height, bool fulls) {
 		// Add title setting function.
-		this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
+		if(!fulls)
+			this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
+		else
+			this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_FULLSCREEN);
 		if(this->window == NULL) {
 			fprintf(stderr, "[E] Error creating window. Info:\n");
 			fprintf(stderr, "[E] %s\n", SDL_GetError());
@@ -106,19 +110,24 @@
 		}
 		else {
 			SDL_SetHintWithPriority(SDL_HINT_RENDER_VSYNC, "1", SDL_HINT_OVERRIDE);
-			if(!SDL_CreateRenderer( this->window, -1, SDL_RENDERER_ACCELERATED )) {
+			if(!SDL_CreateRenderer( this->window, -1, 0 )) {
 				fprintf(stderr, "[E] Error creating renderer. Info:\n");
 				fprintf(stderr, "[E] %s\n", SDL_GetError());
 				fprintf(stderr, "[E] This is fatal. Dying.");
 				exit(-1);
 			}
+
+			this->logicalRender = false;
 		}
 	}
 
 	void ContextManager::_InitWindowAC(int width, int height, bool fulls) {
 		this->accelerate = true;
 
-		this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
+		if(!fulls)
+			this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
+		else
+			this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_FULLSCREEN);
 		if(this->window == NULL) {
 			fprintf(stderr, "[E] Error creating window. Info:\n");
 			fprintf(stderr, "[E] %s\n", SDL_GetError());
@@ -159,7 +168,8 @@
 		}
 		else {
 			_InitWindowLogicalSW(width_win, height_win, width_log, height_log, fulls);
-			this->surface_o = SDL_CreateRGBSurface(0, width_win, height_win, 32, 0, 0, 0, 0);
+			this->surface_o = SDL_CreateRGBSurface(0, width_win, height_win, 32, RED_MASK, GREEN_MASK, BLUE_MASK, ALPHA_MASK);
+			SDL_SetSurfaceBlendMode(this->surface_o, SDL_BLENDMODE_BLEND);
 		}
 
 		txtMgr = new TextManager(this);
@@ -167,7 +177,10 @@
 
 	// Init window with a logical size and a real one.
 	void ContextManager::_InitWindowLogicalSW(int width_win, int height_win, int width_log, int height_log, bool fulls) {
-		this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width_win, height_win, SDL_WINDOW_SHOWN);
+		if(!fulls)
+			this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width_win, height_win, SDL_WINDOW_SHOWN);
+		else
+			this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width_win, height_win, SDL_WINDOW_FULLSCREEN);
 		if(this->window == NULL) {
 			fprintf(stderr, "[E] Error creating window. Info:\n");
 			fprintf(stderr, "[E] %s\n", SDL_GetError());
@@ -175,7 +188,7 @@
 			exit(-1);
 		}
 		else {
-			this->renderer = SDL_CreateRenderer( this->window, -1, SDL_RENDERER_ACCELERATED );
+			this->renderer = SDL_CreateRenderer( this->window, -1, 0 );
 			if(this->renderer == NULL) {
 				fprintf(stderr, "[E] Error creating renderer. Info:\n");
 				fprintf(stderr, "[E] %s\n", SDL_GetError());
@@ -185,7 +198,7 @@
 			else {
 				this->logicalRender = true;
 
-				this->surface = SDL_CreateRGBSurface(0, width_log, height_log, 32, 0, 0, 0, 0);
+				this->surface = SDL_CreateRGBSurface(0, width_log, height_log, 32, RED_MASK, GREEN_MASK, BLUE_MASK, ALPHA_MASK);
 			}
 		}
 	}
@@ -193,8 +206,10 @@
 		// Init window with a logical size and a real one.
 	void ContextManager::_InitWindowLogicalAC(int width_win, int height_win, int width_log, int height_log, bool fulls) {
 		this->accelerate = true;
-
-		this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width_win, height_win, SDL_WINDOW_SHOWN);
+		if(!fulls)
+			this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width_win, height_win, SDL_WINDOW_SHOWN);
+		else
+			this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width_win, height_win, SDL_WINDOW_FULLSCREEN);
 		if(this->window == NULL) {
 			fprintf(stderr, "[E] Error creating window. Info:\n");
 			fprintf(stderr, "[E] %s\n", SDL_GetError());
@@ -238,7 +253,8 @@
 		else {
 			if (logicalRender)
 				SDL_FillRect(this->surface, NULL, SDL_MapRGB(this->surface->format, 0x0, 0x0, 0x0));
-			SDL_FillRect(this->surface_o, NULL, SDL_MapRGB(this->surface_o->format, 0x0, 0x0, 0x0));
+
+			SDL_FillRect(this->surface_o, NULL, SDL_MapRGBA(this->surface_o->format, 0x0, 0x0, 0x0, 0x0));
 
 			SDL_FillRect(SDL_GetWindowSurface(this->window), NULL, SDL_MapRGB(SDL_GetWindowSurface(this->window)->format, 0x0, 0x0, 0x0));
 		}
@@ -255,7 +271,7 @@
 			SDL_SetRenderTarget(renderer, NULL);
 		}
 		else {
-			SDL_FillRect(this->surface_o, NULL, SDL_MapRGB(this->surface_o->format, 0x0, 0x0, 0x0));
+			SDL_FillRect(this->surface_o, NULL, SDL_MapRGBA(this->surface_o->format, 0, 0, 0, 0));
 		}
 	}
 

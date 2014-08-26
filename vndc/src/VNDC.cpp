@@ -26,12 +26,26 @@ int main(int argc, char** argv) {
 	bool enable_v = false;
 	bool newgame = false;
 	char c;
+	#ifdef USE_ANDROID
+	bool software = true;
+	#else
+	bool software = false;	
+	#endif
 
-	while((c = getopt(argc, argv, "nbvx:y:d:m:s:ch")) != -1) {
+	while((c = getopt(argc, argv, "wnbvx:y:d:m:s:ch")) != -1) {
 		switch(c) {
+			case 'w':
+				#ifdef USE_ANDROID
+				printf("[info] Forcing Hardware Acceleration.\n");
+				#else
+				printf("[info] Utilizing Software Rendering.\n");
+				#endif
+				software = !software;
+				break;
 			case 'n':
 				printf("[info] New game, not reloading save.\n");
-				newgame = true;			
+				newgame = true;
+				break;
 			case 'v':
 				printf("[info] Script commands will be echoed.\n");
 				enable_v = true;
@@ -65,6 +79,7 @@ int main(int argc, char** argv) {
 				break;
 			case 'h':
 				printf("-x size -y size\tStretch display window to WxH\n");
+				printf("-w\t\tUse Software Rendering (on android: force HW render)\n");
 				printf("-n\t\tNew Game. Do not reload default save.\n");
 				printf("-d dir\t\tChange to directory/Run game in directory\n");
 				printf("-b\t\tDebug Mode. Hit Ctrl+C on console for shell\n");
@@ -97,6 +112,7 @@ int main(int argc, char** argv) {
 	}
 	GetData()->vndc_enabled = vndc_extensions;
 	GetData()->verbose = enable_v;
+	GetData()->sw_rendering = software;
 	if(debug_enable) {
 		signal(SIGINT, DebugTrap);
 		GetData()->debug_mode = true;

@@ -8,11 +8,6 @@
 
 #include "gitrev.hpp"
 
-// No output capabilities.
-#ifdef WITH_ANDROID
-# define printf(...)
-#endif
-
 #include "Data.hpp"
 
 void Parse();				// This reads commands from files.

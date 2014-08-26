@@ -20,7 +20,10 @@ void op_bgload(char* file, int* fadetime) {
 	//printf("Attempt to load file %s as BG\n", path);
 
 	// Load displayable.
-	SDL_Surface* sfc = IMG_Load(GetData()->current_bg);
+
+	UDisplayable* disp = new UDisplayable(GetData()->ctx, GetData()->current_bg);
+
+	// SDL_Surface* sfc = IMG_Load(GetData()->current_bg);
 
 	uint8_t transp_incr = 16;
 	if(fadetime != NULL)
@@ -28,18 +31,17 @@ void op_bgload(char* file, int* fadetime) {
 
 	// Transition effect.
 
-	SDL_Texture* tx = NULL;
-	tx = SDL_CreateTextureFromSurface(GetData()->ctx->Renderer(), sfc);
-	SDL_SetTextureBlendMode(tx, SDL_BLENDMODE_BLEND);
+	// SDL_Texture* tx = NULL;
+	// tx = SDL_CreateTextureFromSurface(GetData()->ctx->Renderer(), sfc);
+	// SDL_SetTextureBlendMode(tx, SDL_BLENDMODE_BLEND);
 
-	SDL_FreeSurface(sfc);
+	// SDL_FreeSurface(sfc);
 
 	int delay = 1;
-	for(int tr = 0; tr < 255; tr += transp_incr) {
-		SDL_SetTextureAlphaMod(tx, tr);
-		GetData()->ctx->Blit(tx, NULL, NULL);
+	for(int tr = 0; tr < 255; tr += transp_incr) {		
+		disp->Blit();
 		op_delay(&delay);
 	}
 
-	SDL_DestroyTexture(tx);
+//	SDL_DestroyTexture(tx);
 }

@@ -82,7 +82,65 @@
 
 	// Sets the Displayable's mode.
 	UDisplayable::UDisplayable(ContextManager* cx, UDisplayableMode mode, char* fname) {
-		UDisplayable(cx, fname);
+		// UDisplayable(cx, fname);
+
+
+		DefaultVars();
+
+		SDL_Surface* bitmap_tmp = IMG_Load(fname);
+
+		if(!bitmap_tmp) {
+			printf("[UDisplayable::Ctor] File could not be loaded, this->Error set.\n");
+			Error = true;
+		}
+		else {
+			this->x = 0;
+			this->y = 0;
+			this->loc.x = 0;
+			this->loc.y = 0;
+			this->ctx = cx;
+			this->frameWidth = bitmap_tmp->w;
+			this->bmp_w = bitmap_tmp->w;
+			this->bmp_h = bitmap_tmp->h;
+
+			// We still allocate the two arrays, regardless.
+
+			// These values are unused, but we'll default them so it will operate normally.
+			hitbox = (int*)calloc(sizeof(int), 4);
+
+			// By default, it will fill this with 0, 0, W, H.
+			// This will behave identically to a displayable.
+			hitbox[0] = 0;
+			hitbox[1] = 0;
+			hitbox[2] = bitmap_tmp->w;
+			hitbox[3] = bitmap_tmp->h;
+
+			this->loc.w = bitmap_tmp->w;
+			this->loc.h = bitmap_tmp->w;
+
+			frame = (int*)calloc(sizeof(int), 4);
+
+			frame[0] = 0;
+			frame[1] = 0;
+			frame[2] = cx->GetWidth();
+			frame[3] = cx->GetHeight();
+
+			// Determine if we're on an accelerated context. If so, we create a texture out of the bitmap.
+			// Then we store what we'll use to the void* bitmap, either Tex or Surf.
+
+			if (cx->Accelerated()) {
+				SDL_Texture* tex = SDL_CreateTextureFromSurface(ctx->Renderer(), bitmap_tmp);
+				this->bitmap = (void*)tex;
+				SDL_FreeSurface(bitmap_tmp);
+			}
+			else {
+				this->bitmap = (void*)bitmap_tmp;
+			}
+		}
+		#ifdef DEBUG_OVERKILL
+		printf("[UDisplayable~Ctor] accel:%d\n", cx->Accelerated());
+		#endif
+
 		this->dispMode = mode;
 	}
 
@@ -282,8 +340,14 @@
 		printf("[UDisplayable::Blit]\n");
 		#endif
 
+		SDL_Rect src;
+		src.x = 0;
+		src.y = 0;
+		src.w = frameWidth;
+		src.h = bmp_h;
+
 		if (frameIndex == -1) {
-			ctx->Blit(bitmap, NULL, &loc_adj);
+			ctx->Blit(bitmap, &src, &loc_adj);
 			return;
 		}
 

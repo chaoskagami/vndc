@@ -35,6 +35,7 @@ class DataContainer {
 		bool verbose;
 		int currentLine;
 		bool skip_key_on;
+		bool sw_rendering;
 		bool eof;
 		char* window_name;
 		char* next_line; // Used for voice-detect.

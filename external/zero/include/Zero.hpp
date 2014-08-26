@@ -5,6 +5,8 @@
 #include <windows.h>
 #endif
 
+#include <gitrev.hpp>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,6 +15,18 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    #define RED_MASK 	0xff000000
+    #define GREEN_MASK 	0x00ff0000
+    #define BLUE_MASK 	0x0000ff00
+    #define ALPHA_MASK 	0x000000ff
+#else
+    #define RED_MASK 	0x000000ff
+    #define GREEN_MASK 	0x0000ff00
+    #define BLUE_MASK 	0x00ff0000
+    #define ALPHA_MASK 	0xff000000
+#endif
 
 #include "AudioManager.hpp"
 #include "ContextManager.hpp"

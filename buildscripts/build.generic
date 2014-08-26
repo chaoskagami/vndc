@@ -11,7 +11,7 @@ SRC=$ROOT/
 LIB=$ROOT/external/lib
 BIN=$ROOT/bin
 
-CXXFLAGS="`pkg-config sdl2 --cflags` `pkg-config SDL2_mixer --cflags` `pkg-config SDL2_image --cflags` `pkg-config SDL2_ttf --cflags`"
+CXXFLAGS="-g `pkg-config sdl2 --cflags` `pkg-config SDL2_mixer --cflags` `pkg-config SDL2_image --cflags` `pkg-config SDL2_ttf --cflags`"
 LDFLAGS="`pkg-config sdl2 --libs` `pkg-config SDL2_image --libs` `pkg-config SDL2_ttf --libs` `pkg-config SDL2_mixer --libs`"
 INCLUDE="-I$ROOT/external/zero/include -I$ROOT/vndc/include"
 

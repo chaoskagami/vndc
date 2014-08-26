@@ -30,6 +30,11 @@ DataContainer::DataContainer() {
 	verbose = false;
 	currentLine = 0;
 	skip_key_on = false;
+	#ifdef USE_ANDROID
+	sw_rendering = true;
+	#else
+	sw_rendering = false;
+	#endif
 	eof = false;
 	next_line = NULL; // Used for voice-detect.
 				// It's impossible to parse without lookahead.
