@@ -11,7 +11,7 @@ ROOT=`pwd`
 SRC=$ROOT/
 BIN=$ROOT/bin
 
-CXXFLAGS="-I$ROOT/external/Windows/x86_64-w64-mingw32/include -DGIT_REV=\"$(git rev-parse HEAD)\""
+CXXFLAGS="-I$ROOT/external/Windows/x86_64-w64-mingw32/include"
 
 CROSS=x86_64-w64-mingw32
 
@@ -19,6 +19,8 @@ source buildscripts/mk
 
 LDFLAGS="-L$ROOT/external/Windows/x86_64-w64-mingw32/lib -lmingw32 -lSDL2main -lSDL2  -lSDL2_mixer -lSDL2_image -lSDL2_ttf -Dmain=SDL_main -Wl,--no-undefined -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid -static-libgcc -static-libstdc++"
 INCLUDE="-I$ROOT/external/zero/include -I$ROOT/vndc/include"
+
+gith vndc/include/gitrev.hpp
 
 newtd
 	mkmcc		external/zero/src

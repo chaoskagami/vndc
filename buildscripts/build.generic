@@ -10,12 +10,14 @@ ROOT=`pwd`
 SRC=$ROOT/
 LIB=$ROOT/external/lib
 BIN=$ROOT/bin
-CXXFLAGS="-DGIT_REV=\"$(git rev-parse HEAD)\""
+
+CXXFLAGS="`pkg-config sdl2 --cflags` `pkg-config SDL2_mixer --cflags` `pkg-config SDL2_image --cflags` `pkg-config SDL2_ttf --cflags`"
+LDFLAGS="`pkg-config sdl2 --libs` `pkg-config SDL2_image --libs` `pkg-config SDL2_ttf --libs` `pkg-config SDL2_mixer --libs`"
+INCLUDE="-I$ROOT/external/zero/include -I$ROOT/vndc/include"
 
 source buildscripts/mk
 
-LDFLAGS="`pkg-config sdl2 --libs-only-l --libs-only-L` `pkg-config SDL2_image --libs-only-l --libs-only-L` `pkg-config SDL2_ttf --libs-only-l --libs-only-L` `pkg-config SDL2_mixer --libs-only-l --libs-only-L`"
-INCLUDE="-I$ROOT/external/zero/include -I$ROOT/external/out/include -I$ROOT/vndc/include"
+gith vndc/include/gitrev.hpp
 
 newtd
 	mkmcc		external/zero/src

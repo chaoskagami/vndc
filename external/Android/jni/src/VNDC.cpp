@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <signal.h>
 
+
+
 void DebugTrap(int sig) {
 	GetData()->debug_to_shell = true;
 }
@@ -86,10 +88,6 @@ int main(int argc, char** argv) {
 
 	if(chdir_to_dir)
 		chdir(chdir_to_dir);
-	#ifdef WITH_ANDROID
-	chdir((char*)"/mnt/sdcard/vndc/");
-	#endif
-
 	if(main_script_override != NULL) {
 		printf("[debug] Note that in this mode, l_flags is not set.\n[debug] Expect bugs/gameover, this is normal.\n");
 		memset(GetData()->main_scr[0], 0, 399);

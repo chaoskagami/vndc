@@ -16,14 +16,14 @@ PNG_LIBRARY_PATH := external/libpng-1.6.2
 
 # Enable this if you want to support loading WebP images
 # The library path should be a relative path to this directory.
-SUPPORT_WEBP := true
+SUPPORT_WEBP := false
 WEBP_LIBRARY_PATH := external/libwebp-0.3.0
 
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)
 LOCAL_CFLAGS := -DLOAD_BMP -DLOAD_GIF -DLOAD_LBM -DLOAD_PCX -DLOAD_PNM \
                 -DLOAD_TGA -DLOAD_XCF -DLOAD_XPM -DLOAD_XV
-LOCAL_CFLAGS += -O3 -fstrict-aliasing -fprefetch-loop-arrays
+LOCAL_CFLAGS += -O3 -fstrict-aliasing
 
 LOCAL_SRC_FILES := $(notdir $(filter-out %/showimage.c, $(wildcard $(LOCAL_PATH)/*.c)))
 
@@ -77,7 +77,7 @@ ifeq ($(SUPPORT_JPG),true)
         $(JPG_LIBRARY_PATH)/jfdctfst.c \
         $(JPG_LIBRARY_PATH)/jfdctint.c \
         $(JPG_LIBRARY_PATH)/jidctflt.c \
-        $(JPG_LIBRARY_PATH)/jidctfst.S \
+        $(JPG_LIBRARY_PATH)/jidctfst.c \
         $(JPG_LIBRARY_PATH)/jidctint.c \
         $(JPG_LIBRARY_PATH)/jquant1.c \
         $(JPG_LIBRARY_PATH)/jquant2.c \

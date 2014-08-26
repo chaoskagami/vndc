@@ -3,11 +3,18 @@
 # This is all auxillary functions to simplify the build script.
 # I hate makefiles, and cmake so shell scripts work.
 
-CXX="${CROSS}-g++"
+if [ ! -z "${CROSS}" ]; then
+	CXX="${CROSS}-g++"
+	LD="${CROSS}-g++"
+	AR="${CROSS}-ar rcs"
+else
+	CXX="g++"
+	LD="g++"
+	AR="ar rcs"
+fi
+
 CXXFLAGS="$CXXFLAGS -std=gnu++11 -Wall -Werror -Wno-error=pointer-arith"
-LD="${CROSS}-g++"
 LDFLAGS="$LDFLAGS -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf"
-AR="${CROSS}-ar rcs"
 
 CA_CMD="$CXX $CXXFLAGS $LDFLAGS"
 
@@ -51,4 +58,13 @@ function newtd {
 function deltd {
 	cd ..
 	rm -rf td
+}
+
+function gith {
+	echo "PROP		$1"
+	echo "#ifndef GIT_REV_HDR" > "$ROOT/$1"
+	echo "#define GIT_REV_HDR" >> "$ROOT/$1"
+	echo "#define GIT_REV \"$(git rev-parse HEAD)\"" >> "$ROOT/$1"
+	echo "$2" >> "$ROOT/$1"
+	echo "#endif" >> "$ROOT/$1"
 }
