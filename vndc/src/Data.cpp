@@ -32,8 +32,10 @@ DataContainer::DataContainer() {
 	skip_key_on = false;
 	#ifdef USE_ANDROID
 	sw_rendering = true;
+	fullscreen = true;
 	#else
 	sw_rendering = false;
+	fullscreen = false;
 	#endif
 	eof = false;
 	next_line = NULL; // Used for voice-detect.

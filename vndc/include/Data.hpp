@@ -36,6 +36,7 @@ class DataContainer {
 		int currentLine;
 		bool skip_key_on;
 		bool sw_rendering;
+		bool fullscreen;
 		bool eof;
 		char* window_name;
 		char* next_line; // Used for voice-detect.

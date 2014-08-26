@@ -28,12 +28,18 @@ int main(int argc, char** argv) {
 	char c;
 	#ifdef USE_ANDROID
 	bool software = true;
+	bool fulls = true;
 	#else
 	bool software = false;	
+	bool fulls = false;
 	#endif
 
-	while((c = getopt(argc, argv, "wnbvx:y:d:m:s:ch")) != -1) {
+	while((c = getopt(argc, argv, "fwnbvx:y:d:m:s:ch")) != -1) {
 		switch(c) {
+			case 'f':
+				printf("[info] Starting in fullscreen mode.\n");
+				fulls = true;
+				break;
 			case 'w':
 				#ifdef USE_ANDROID
 				printf("[info] Forcing Hardware Acceleration.\n");
@@ -80,6 +86,7 @@ int main(int argc, char** argv) {
 			case 'h':
 				printf("-x size -y size\tStretch display window to WxH\n");
 				printf("-w\t\tUse Software Rendering (on android: force HW render)\n");
+				printf("-f\t\tFullscreen mode.\n");
 				printf("-n\t\tNew Game. Do not reload default save.\n");
 				printf("-d dir\t\tChange to directory/Run game in directory\n");
 				printf("-b\t\tDebug Mode. Hit Ctrl+C on console for shell\n");
@@ -110,9 +117,12 @@ int main(int argc, char** argv) {
 		memset(GetData()->main_scr[0], 0, 399);
 		strncpy(GetData()->main_scr[0], main_script_override, 399);
 	}
+
 	GetData()->vndc_enabled = vndc_extensions;
 	GetData()->verbose = enable_v;
 	GetData()->sw_rendering = software;
+	GetData()->fullscreen = fulls;
+
 	if(debug_enable) {
 		signal(SIGINT, DebugTrap);
 		GetData()->debug_mode = true;

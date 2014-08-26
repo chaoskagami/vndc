@@ -7,6 +7,10 @@
 
 #include <gitrev.hpp>
 
+#ifdef USE_ANDROID
+#define printf SDL_Log
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
