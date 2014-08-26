@@ -1,5 +1,5 @@
 #ifndef GIT_REV_HDR
 #define GIT_REV_HDR
-#define GIT_REV "76f2254e2693ed8e1696445264e7aed57e60784e"
-
+#define GIT_REV "1982fb78b84fe7edfe01a2bd291ee4200536c563"
+#define WITH_ANDROID 1
 #endif
