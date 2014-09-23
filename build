@@ -10,20 +10,9 @@ elif [ "$1" == "linux" ]; then
 	buildscripts/build.generic
 elif [ "$1" == "generic" ]; then
 	buildscripts/build.generic
-elif [ "$1" == "android" ]; then
-	buildscripts/build.android
 elif [ "$1" == "clean" ]; then
 	rm -rf bin
 	echo "RM		bin"
-	cd external/Android
-	echo "NDK-CLEAN	external/Android"
-	ndk-build clean > /dev/null
-	echo "ANT-CLEAN	external/Android"
-	ant clean > /dev/null
-	echo "RM		external/Android/jni/src/*.{cpp,hpp}"
-	rm jni/src/*.hpp
-	rm jni/src/*.cpp
-	cd ../../
 else
 	echo "Targets: mingw32, mingw64, linux, generic"
 	echo "linux32 target was removed. Build in a chroot."
