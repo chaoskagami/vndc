@@ -25,7 +25,7 @@
 
 		DefaultVars();
 
-		SDL_Surface* bitmap_tmp = IMG_Load(fname);
+		SDL_Surface* bitmap_tmp = (SDL_Surface*)cx->LoadImage(fname);
 
 		if(!bitmap_tmp) {
 			printf("[UDisplayable::Ctor] File could not be loaded, this->Error set.\n");
@@ -65,14 +65,11 @@
 
 			// Determine if we're on an accelerated context. If so, we create a texture out of the bitmap.
 			// Then we store what we'll use to the void* bitmap, either Tex or Surf.
-
-			if (cx->Accelerated()) {
-				SDL_Texture* tex = SDL_CreateTextureFromSurface(ctx->Renderer(), bitmap_tmp);
-				this->bitmap = (void*)tex;
-				SDL_FreeSurface(bitmap_tmp);
+			if(cx->Accelerated()) {
+				this->bitmap = cx->AccelImage(bitmap_tmp);
 			}
 			else {
-				this->bitmap = (void*)bitmap_tmp;
+				this->bitmap = cx->GLTexImage(bitmap_tmp);
 			}
 		}
 		#ifdef DEBUG_OVERKILL
@@ -87,7 +84,7 @@
 
 		DefaultVars();
 
-		SDL_Surface* bitmap_tmp = IMG_Load(fname);
+		SDL_Surface* bitmap_tmp = (SDL_Surface*)cx->LoadImage(fname);
 
 		if(!bitmap_tmp) {
 			printf("[UDisplayable::Ctor] File could not be loaded, this->Error set.\n");
@@ -128,13 +125,11 @@
 			// Determine if we're on an accelerated context. If so, we create a texture out of the bitmap.
 			// Then we store what we'll use to the void* bitmap, either Tex or Surf.
 
-			if (cx->Accelerated()) {
-				SDL_Texture* tex = SDL_CreateTextureFromSurface(ctx->Renderer(), bitmap_tmp);
-				this->bitmap = (void*)tex;
-				SDL_FreeSurface(bitmap_tmp);
+			if(cx->Accelerated()) {
+				this->bitmap = cx->AccelImage(bitmap_tmp);
 			}
 			else {
-				this->bitmap = (void*)bitmap_tmp;
+				this->bitmap = cx->GLTexImage(bitmap_tmp);
 			}
 		}
 		#ifdef DEBUG_OVERKILL
@@ -149,13 +144,7 @@
 
 		DefaultVars();
 
-		SDL_RWops* rwo = SDL_RWFromMem(memory, mSize);
-		SDL_Surface* bitmap_tmp = IMG_LoadTyped_RW(rwo, 0, "PNG");
-		if(rwo == NULL || bitmap_tmp == NULL) {
-			printf("Loading RWops failed. %s", SDL_GetError());
-			while(1);
-			//exit(-1);
-		}
+		SDL_Surface* bitmap_tmp = (SDL_Surface*)cx->LoadImageMemory(memory, mSize, (char*)"PNG");
 
 		this->x = 0;
 		this->y = 0;
@@ -191,16 +180,12 @@
 		// Determine if we're on an accelerated context. If so, we create a texture out of the bitmap.
 		// Then we store what we'll use to the void* bitmap, either Tex or Surf.
 
-		if (cx->Accelerated()) {
-			SDL_Texture* tex = SDL_CreateTextureFromSurface(ctx->Renderer(), bitmap_tmp);
-			this->bitmap = (void*)tex;
-			SDL_FreeSurface(bitmap_tmp);
+		if(cx->Accelerated()) {
+			this->bitmap = cx->AccelImage(bitmap_tmp);
 		}
 		else {
-			this->bitmap = (void*)bitmap_tmp;
+			this->bitmap = cx->GLTexImage(bitmap_tmp);
 		}
-
-		this->dispMode = mode;
 	}
 
 	// Sets the position on screen.
@@ -347,7 +332,7 @@
 		src.h = bmp_h;
 
 		if (frameIndex == -1) {
-			ctx->Blit(bitmap, &src, &loc_adj);
+			ctx->Blit(bitmap, &src, &loc_adj, NULL);
 			return;
 		}
 
@@ -358,7 +343,19 @@
 		frameClip.w = frameWidth;
 		frameClip.h = bmp_h;
 
-		ctx->Blit(bitmap, &frameClip, &loc_adj);
+		if(ctx->GLMode()) {
+			SDL_Rect image_rect;
+
+			image_rect.x = 0;
+			image_rect.x = 0;
+			image_rect.w = bmp_w;
+			image_rect.h = bmp_h;
+
+			ctx->Blit(bitmap, &frameClip, &loc_adj, &image_rect); // GL needs data that isn't inside of bitmap.
+		}
+		else {
+			ctx->Blit(bitmap, &frameClip, &loc_adj, NULL);
+		}
 	}
 
 	// Get SDL_Rect for collision calculation. In a base Displayable, it returns the image width.

@@ -10,6 +10,7 @@
 		// use logical size
 		logicalRender = false;
 		accelerate = false;
+		opengl_mode = false;
 
 		StartQuit = false;
 
@@ -37,7 +38,7 @@
 
 	// Initializes SDL and saves stuff into the context.
 
-	ContextManager::ContextManager(int scr_width, int scr_height, bool fulls, bool accel) {
+	ContextManager::ContextManager(int scr_width, int scr_height, bool fulls, DispMode_t disp) {
 		DefaultVariables();
 
 		if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0) {
@@ -48,7 +49,7 @@
 			#endif
 		}
 		else {
-			this->InitWindow(scr_width, scr_height, fulls, accel);
+			this->InitWindow(scr_width, scr_height, fulls, disp);
 		}
 
 		audioMgr = new AudioManager();
@@ -72,25 +73,28 @@
 
 	// Creates a window.
 
-	void ContextManager::InitWindow(int width, int height, bool fulls, bool accel) {
+	void ContextManager::InitWindow(int width, int height, bool fulls, DispMode_t disp) {
 		this->WIN_width = width;
 		this->WIN_height = height;
 		this->LOG_width = width;
 		this->LOG_height = height;
 
 		#ifdef DEBUG_OVERKILL
-		printf("[ContextManager::InitWindow] Params: w:%d h:%d f:%d a:%d\n", width, height, fulls, accel);
+		printf("[ContextManager::InitWindow] Params: w:%d h:%d f:%d a:%d\n", width, height, fulls, disp);
 		#endif
 
-		if(accel) {
+		if (disp == Accel2d) {
 			_InitWindowAC(width, height, fulls);
 			this->texture_o = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
 			SDL_SetTextureBlendMode(this->texture_o, SDL_BLENDMODE_BLEND);
 		}
-		else {
+		else if (disp == Software) {
 			_InitWindowSW(width, height, fulls);
 			this->surface_o = SDL_CreateRGBSurface(0, width, height, 32, RED_MASK, GREEN_MASK, BLUE_MASK, ALPHA_MASK);
 			SDL_SetSurfaceBlendMode(this->surface_o, SDL_BLENDMODE_BLEND);
+		}
+		else if (disp == OpenGL) {
+			_InitWindowGL(width, height, fulls);
 		}
 
 		txtMgr = new TextManager(this);
@@ -150,23 +154,61 @@
 		}
 	}
 
+	// OpenGL window. Note - a LOT functions different in this mode.
+	void ContextManager::_InitWindowGL(int width, int height, bool fulls) {
+
+		opengl_mode = true;
+
+		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
+
+		// Request OpenGL 3.0 context. Yes, not 3.1, 3.2, 4.0. THREE POINT O'.
+		// Why? I use the fixed function pipeline which is gonzo in >3.1
+		// and I'm not about to learn a new api that consists of VBOs, FBOs,
+		// and shader code (which btw, is retarded.)
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+		if(!fulls)
+			this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL);
+		else
+			this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_FULLSCREEN|SDL_WINDOW_OPENGL);
+
+		glctx = SDL_GL_CreateContext(window);
+
+		glEnable( GL_TEXTURE_2D );
+
+		glViewport( 0, 0, width, height );
+
+		glClear( GL_COLOR_BUFFER_BIT );
+
+		glMatrixMode( GL_PROJECTION );
+		glLoadIdentity();
+
+		glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+
+		glMatrixMode( GL_MODELVIEW );
+		glLoadIdentity();
+
+		vertCnt = new VertexController(this);
+	}
+
 	// Init window with a logical size and a real one. Determines which backend to use.
-	void ContextManager::InitWindowLogical(int width_win, int height_win, int width_log, int height_log, bool fulls, bool accel) {
+	void ContextManager::InitWindowLogical(int width_win, int height_win, int width_log, int height_log, bool fulls, DispMode_t disp) {
 		this->LOG_width = width_log;
 		this->LOG_height = height_log;
 		this->WIN_width = width_win;
 		this->WIN_height = height_win;
 
 		#ifdef DEBUG_OVERKILL
-		printf("[ContextManager::InitWindowLogical] phyw:%d phyh:%d logw:%d logh:%d f:%d a:%d\n", width_win, height_win, width_log, height_log, fulls, accel);
+		printf("[ContextManager::InitWindowLogical] phyw:%d phyh:%d logw:%d logh:%d f:%d a:%d\n", width_win, height_win, width_log, height_log, fulls, disp);
 		#endif
 
-		if (accel) {
+		if (disp == Accel2d) {
 			_InitWindowLogicalAC(width_win, height_win, width_log, height_log, fulls);
 			this->texture_o = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width_win, height_win);
 			SDL_SetTextureBlendMode(this->texture_o, SDL_BLENDMODE_BLEND);
 		}
-		else {
+		else if (disp == Software) {
 			_InitWindowLogicalSW(width_win, height_win, width_log, height_log, fulls);
 			this->surface_o = SDL_CreateRGBSurface(0, width_win, height_win, 32, RED_MASK, GREEN_MASK, BLUE_MASK, ALPHA_MASK);
 			SDL_SetSurfaceBlendMode(this->surface_o, SDL_BLENDMODE_BLEND);
@@ -250,6 +292,10 @@
 
 			SDL_RenderClear(renderer);
 		}
+		else if (opengl_mode) {
+			glClearColor(0,0,0,0);
+			glClear(GL_COLOR_BUFFER_BIT);
+		}
 		else {
 			if (logicalRender)
 				SDL_FillRect(this->surface, NULL, SDL_MapRGB(this->surface->format, 0x0, 0x0, 0x0));
@@ -269,6 +315,10 @@
 			SDL_SetRenderTarget(renderer, texture_o);
 			SDL_RenderClear(renderer);
 			SDL_SetRenderTarget(renderer, NULL);
+		}
+		else if (opengl_mode) {
+			glClearColor(0,0,0,0);
+			glClear(GL_COLOR_BUFFER_BIT);
 		}
 		else {
 			SDL_FillRect(this->surface_o, NULL, SDL_MapRGBA(this->surface_o->format, 0, 0, 0, 0));
@@ -300,6 +350,9 @@
 
 			SDL_RenderPresent(renderer);
 		}
+		else if (opengl_mode) {
+			SDL_GL_SwapWindow(window);
+		}
 		else {
 			if(logicalRender)
 				SDL_BlitScaled(this->surface, NULL, SDL_GetWindowSurface(this->window), NULL);
@@ -326,13 +379,18 @@
 		return renderer;
 	}
 
-		// return the renderer.
+	// return the mode.
 	bool ContextManager::Accelerated() {
 		return accelerate;
 	}
 
+	// return the mode.
+	bool ContextManager::GLMode() {
+		return opengl_mode;
+	}
+
 	// Blit data via cast. inp should be a SDL_Surface or SDL_Texture.
-	void ContextManager::Blit(void* inp, SDL_Rect* src, SDL_Rect* dst) {
+	void ContextManager::Blit(void* inp, SDL_Rect* src, SDL_Rect* dst, SDL_Rect* glrect) {
 		if(accelerate) {
 			if (logicalRender) SDL_SetRenderTarget(renderer, texture);
 
@@ -340,13 +398,72 @@
 
 			if (logicalRender) SDL_SetRenderTarget(renderer, NULL);
 		}
+		else if(opengl_mode) {
+			GLuint in = ((GLuint*)inp)[0];
+
+			// printf("[GL] (blit) in: %d\n", in);
+
+			GLfloat x_tex, y_tex, x2_tex, y2_tex;
+			if(glrect == NULL) {
+				x_tex  = 0.0f;
+				y_tex  = 0.0f;
+				x2_tex = 1.0f;
+				y2_tex = 1.0f;
+			}
+			else {
+				GLfloat tex_width, tex_height;
+
+				tex_width = 1.0f / ((float)glrect->w);
+				tex_height = 1.0f / ((float)glrect->h);
+
+				x_tex  = tex_width   * ((float)(src->x));
+				y_tex = tex_height   * ((float)(src->y));
+				x2_tex = tex_width   * ((float)(src->x + src->w));
+				y2_tex  = tex_height * ((float)(src->y + src->h));
+
+				// printf("Detail Calculation] tex_w:%f tex_h:%f x_t:%f y_t:%f x2_t:%f y2_t:%f\n", tex_width, tex_height, x_tex, y_tex, x2_tex, y2_tex);
+			}
+
+			GLfloat x_box, y_box, x2_box, y2_box;
+			x_box = dst->x;
+			y_box = dst->y + dst->h;
+			x2_box = dst->x + dst->w;
+			y2_box = dst->y;
+
+			//printf("[GL] Box: x.%f y.%f x2.%f y2.%f \n", x_box, y_box, x2_box, y2_box);
+
+			glColor4f( 1.0f, 1.0f, 1.0f, 1.0f ); //Don't use special coloring
+
+			// Bind the texture to which subsequent calls refer to
+			glBindTexture( GL_TEXTURE_2D, in );
+
+			glBegin( GL_QUADS );
+				//Bottom-left vertex (corner)
+				glTexCoord2f( x_tex, y_tex );
+				glVertex3f( x_box,  y2_box, 0.0f );
+
+				//Bottom-right vertex (corner)
+				glTexCoord2f( x2_tex, y_tex );
+				glVertex3f( x2_box, y2_box, 0.0f );
+
+				//Top-right vertex (corner)
+				glTexCoord2f( x2_tex, y2_tex );
+				glVertex3f( x2_box, y_box,  0.0f );
+
+				//Top-left vertex (corner)
+				glTexCoord2f( x_tex, y2_tex );
+				glVertex3f( x_box,  y_box,  0.0f );
+			glEnd();
+
+			glBindTexture( GL_TEXTURE_2D, 0 );
+		}
 		else {
 			SDL_BlitSurface((SDL_Surface*)inp, src, surface, dst);
 		}
 	}
 
 	// Blit data to overlay via cast. inp should be a SDL_Surface or SDL_Texture.
-	void ContextManager::OverlayBlit(void* inp, SDL_Rect* src, SDL_Rect* dst) {
+	void ContextManager::OverlayBlit(void* inp, SDL_Rect* src, SDL_Rect* dst, SDL_Rect* glrect) {
 		// Recalculate src and dst based on upscale.
 		double OUTW_Ratio, OUTH_Ratio;
 		OUTW_Ratio = (double)WIN_width  / (double)LOG_width;
@@ -354,8 +471,8 @@
 
 		dst->x = (int)(((double)dst->x) * OUTW_Ratio);
 		dst->y = (int)(((double)dst->y) * OUTH_Ratio);
-		dst->w = (int)(((double)dst->w) * OUTW_Ratio);
-		dst->h = (int)(((double)dst->h) * OUTH_Ratio);
+		if(OUTW_Ratio < 1) dst->w = (int)(((double)dst->w) * OUTW_Ratio);
+		if(OUTH_Ratio < 1) dst->h = (int)(((double)dst->h) * OUTH_Ratio);
 
 		if(accelerate) {
 			if (logicalRender) SDL_SetRenderTarget(renderer, texture_o);
@@ -363,6 +480,36 @@
 			SDL_RenderCopy(renderer, (SDL_Texture*)inp, src, dst);
 
 			if (logicalRender) SDL_SetRenderTarget(renderer, NULL);
+		}
+		else if(opengl_mode) {
+			GLuint in = ((GLuint*)inp)[0];
+
+			GLfloat x, y, x2, y2;
+			x = 1.0f / glrect->x;
+			y = 1.0f / glrect->y;
+			x2 = 1.0f / (glrect->w + glrect->x);
+			y2 = 1.0f / (glrect->h + glrect->y);
+
+			// Bind the texture to which subsequent calls refer to
+			glBindTexture( GL_TEXTURE_2D, in );
+
+			glBegin( GL_QUADS );
+				//Bottom-left vertex (corner)
+				glTexCoord2f( x, y );
+				glVertex3i( dst->x,          dst->y + dst->h, 0.0f );
+
+				//Bottom-right vertex (corner)
+				glTexCoord2f( x2, y );
+				glVertex3i( dst->x + dst->w, dst->y + dst->h, 0.0f );
+
+				//Top-right vertex (corner)
+				glTexCoord2f( x2, y2 );
+				glVertex3i( dst->x + dst->w, dst->y, 0.0f );
+
+				//Top-left vertex (corner)
+				glTexCoord2f( x, y2 );
+				glVertex3i( dst->x,          dst->y, 0.0f );
+			glEnd();
 		}
 		else {
 			SDL_BlitSurface((SDL_Surface*)inp, src, surface_o, dst);
@@ -504,4 +651,82 @@
 
 	void ContextManager::SetTitle(char* title) {
 		SDL_SetWindowTitle(window, title);
+	}
+
+	void* ContextManager::LoadImage(char* fname) {
+		return IMG_Load(fname);
+	}
+
+	void* ContextManager::LoadImageMemory(void* mem, size_t len, char* type) {
+		SDL_RWops* rwo = SDL_RWFromMem(mem, len);
+		SDL_Surface* bitmap_tmp = IMG_LoadTyped_RW(rwo, 0, type);
+
+		return bitmap_tmp;
+	}
+
+	void* ContextManager::AccelImage(void* in) {
+		if(accelerate) {
+			SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, (SDL_Surface*)in);
+			SDL_FreeSurface((SDL_Surface*)in);
+
+			return tex;
+		}
+		return in;
+	}
+
+	void* ContextManager::GLTexImage(void* in) {
+
+		if(!opengl_mode) return in;
+
+		GLuint *tex = (GLuint*)calloc(sizeof(GLuint), 1);
+		GLenum texture_format;
+		GLint  nOfColors;
+		SDL_Surface* sfc = (SDL_Surface*)in;
+
+		if ( (sfc->w & (sfc->w - 1)) != 0 ) {
+			printf("[WARN] Image width not ^2.\n");
+		}
+
+		// Also check if the height is a power of 2
+		if ( (sfc->h & (sfc->h - 1)) != 0 ) {
+			printf("[WARN] Image height not ^2.\n");
+		}
+
+		// get the number of channels in the SDL surface
+		nOfColors = sfc->format->BytesPerPixel;
+		if (nOfColors == 4)     // contains an alpha channel
+		{
+			if (sfc->format->Rmask == 0x000000ff)
+				texture_format = GL_RGBA;
+			else
+				texture_format = GL_BGRA;
+		}
+		else if (nOfColors == 3)     // no alpha channel
+		{
+			if (sfc->format->Rmask == 0x000000ff)
+				texture_format = GL_RGB;
+			else
+				texture_format = GL_BGR;
+		}
+		else {
+			printf("[WARN] Image not truecolor (32bpp). Expect explosions.\n");
+			// this error should not go unhandled
+		}
+
+		// Have OpenGL generate a texture object handle for us
+		glGenTextures( 1, tex );
+
+		// Bind the texture object
+		glBindTexture( GL_TEXTURE_2D, tex[0] );
+
+		// Edit the texture object's image data using the information SDL_Surface gives us
+		glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, sfc->w, sfc->h, 0, texture_format, GL_UNSIGNED_BYTE, sfc->pixels );
+
+		// Set the texture's stretching properties
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+		// printf("[GL] tex: %d\n", tex[0]);
+
+		return tex;
 	}

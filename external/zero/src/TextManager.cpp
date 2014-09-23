@@ -96,7 +96,7 @@ void TextManager::Render(char* text, int x, int y) {
 		dst2.w = src2.w;
 		dst2.h = src2.h;
 	}
-	
+
 	if(ctx->Accelerated()) {
 		SDL_Texture *tmp1 = NULL, *tmp2 = NULL;
 
@@ -104,16 +104,16 @@ void TextManager::Render(char* text, int x, int y) {
 		if(outline)
 			tmp2 = SDL_CreateTextureFromSurface(ctx->Renderer(), sf2);
 
-		ctx->OverlayBlit(tmp2, &src2, &dst2);
-		ctx->OverlayBlit(tmp1, &src, &dst);
+		ctx->OverlayBlit(tmp2, &src2, &dst2, NULL);
+		ctx->OverlayBlit(tmp1, &src, &dst, NULL);
 
 		SDL_DestroyTexture(tmp2);
 		SDL_DestroyTexture(tmp1);
 
 	}
 	else {
-		ctx->OverlayBlit(sf2, &src, &dst);
-		ctx->OverlayBlit(sf1, &src, &dst);
+		ctx->OverlayBlit(sf2, &src, &dst, NULL);
+		ctx->OverlayBlit(sf1, &src, &dst, NULL);
 	}
 
 	SDL_FreeSurface(sf2);
@@ -150,4 +150,50 @@ void TextManager::SetColor(int r, int g, int b, int a)
 void TextManager::SetFontUsed(int index)
 {
 	current_font = index;
+}
+
+// This splits a screen so that each line will fit to a width.
+// Note that this will modify the string in place by inserting \0
+// So your string will likely not be usable as before.
+void TextManager::SplitStringByWidth(char* string, int max_w, int* OUT_num, char*** OUT_ptrs) {
+	if(TestLen(string) > max_w) {
+
+			/* new algo */
+			char** ptrs = NULL;
+			int lines = 0;
+
+			int len = strlen(string);
+
+			int counted = 0;
+
+			while(counted < len) {
+				char* pt_start = &string[counted];
+				char* pt_end = &pt_start[strlen(pt_start)];
+
+				while(pt_end > pt_start && TestLen(pt_start) > max_w) {
+					*pt_end = ' ';
+					--pt_end;
+
+					while (*pt_end != ' ' && pt_end > pt_start) --pt_end;
+
+					*pt_end = '\0';
+				}
+
+				#ifdef DEBUG_OVERKILL
+				printf("Reduced line %d: %s\n", lines, pt_start);
+				#endif
+
+				ptrs = (char**)realloc(ptrs, sizeof(char*)*(lines+1));
+
+				ptrs[lines] = pt_start;
+
+				counted += strlen(pt_start) + 1;
+
+				++lines;
+			}
+
+			OUT_num[0] = lines;
+
+			OUT_ptrs[0] = ptrs;
+		}
 }

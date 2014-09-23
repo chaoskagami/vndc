@@ -18,6 +18,9 @@ class TextManager {
 		void SetFontUsed(int font);
 		void SetColor(int r, int g, int b, int a);
 
+		// Splits string based on font.
+		void SplitStringByWidth(char* string, int max_w, int* OUT_num, char*** OUT_ptrs);
+
 		// Complex functions.
 		// Like printf but with formatting codes. Also not varargs.
 		// Should support this subset of standards:
