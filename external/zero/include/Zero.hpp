@@ -19,6 +19,7 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
+#include <SDL_opengl.h>
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     #define RED_MASK 	0xff000000
@@ -36,5 +37,6 @@
 #include "ContextManager.hpp"
 #include "TextManager.hpp"
 #include "UDisplayable.hpp"
+#include "VertexController.hpp"
 
 #endif

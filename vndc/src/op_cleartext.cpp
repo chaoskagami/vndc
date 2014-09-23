@@ -30,12 +30,12 @@ void ct_transwindow() {
 		//SDL_SetTextureBlendMode(dim, SDL_BLENDMODE_BLEND);
 		//SDL_SetTextureAlphaMod(dim, 128);
 
-		GetData()->ctx->OverlayBlit(dim, &src, &dst);
+		GetData()->ctx->OverlayBlit(dim, &src, &dst, NULL);
 
 		SDL_DestroyTexture(dim);
 	}
 	else {
-		GetData()->ctx->OverlayBlit(sfc, &src, &dst);		
+		GetData()->ctx->OverlayBlit(sfc, &src, &dst, NULL);		
 	}
 
 	SDL_FreeSurface(sfc);
