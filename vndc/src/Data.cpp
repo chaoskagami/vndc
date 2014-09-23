@@ -19,6 +19,8 @@ DataContainer::DataContainer() {
 	render_y2 = screen_h / 15 * 13;
 	text_x = render_x1;
 	text_y = render_y1;
+	text_gap = 35;
+	text_size = 24;
 	jumped = false;
 	choice_coords = NULL;
 	choices = 0;

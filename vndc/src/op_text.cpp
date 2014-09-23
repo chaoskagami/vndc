@@ -102,13 +102,13 @@ void op_text(char* string) {
 				++lines;
 			}
 
-			if( ( lines * 35 + GetData()->text_y ) > GetData()->render_y2 )
+			if( ( lines * GetData()->text_gap + GetData()->text_y ) > GetData()->render_y2 )
 				op_cleartext();
 
 			for(int i=0; i < lines; i++) {
 				//printf("[br] %s\n", ptrs[i]);
 				txt->Render(ptrs[i], GetData()->text_x, GetData()->text_y);
-				GetData()->text_y += 35;
+				GetData()->text_y += GetData()->text_gap;
 			}
 
 			free(ptrs);
@@ -116,7 +116,7 @@ void op_text(char* string) {
 		}
 		else {
 			txt->Render(string, GetData()->text_x, GetData()->text_y);
-			GetData()->text_y += 35;
+			GetData()->text_y += GetData()->text_gap;
 		}
 
 		if(!noclick) {

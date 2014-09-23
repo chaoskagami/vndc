@@ -20,6 +20,8 @@ class DataContainer {
 		int render_y1;
 		int render_x2;
 		int render_y2;
+		int text_gap;
+		int text_size;
 		int text_x;
 		int text_y;
 		std::map<std::string, int> *s_flags;

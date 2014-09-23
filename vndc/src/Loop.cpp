@@ -55,7 +55,7 @@ void Setup() {
 	GetData()->s_flags = new std::map<std::string, int>();
 
 	// Font
-	GetData()->ctx->Text()->LoadFont((char*)"default.ttf", 24);
+	GetData()->ctx->Text()->LoadFont((char*)"default.ttf", GetData()->text_size);
 	GetData()->ctx->Text()->SetFontUsed(1);
 
 	GetData()->ctx->Text()->Outline(1);
