@@ -142,6 +142,8 @@ void ParseCmd(char* line) {
 		op_goto(tokens[1]);
 	else if(!strcmp(tokens[0], "cleartext"))
 		op_cleartext();
+	else if(!strcmp(tokens[0], "save") && num == 2)
+		op_save(tokens[1]);
 
 	free(tokens);
 	free(passthru_line);
@@ -193,7 +195,7 @@ void ParseShell() {
 			DebugContinue = false;
 			GetData()->wait_input = true;
 		}
-		else if (!strncmp(buffer, "save", 4)) {
+		else if (!strncmp(buffer, "debugsave", 4)) {
 			char* savefile = &buffer[5];
 			printf("[debug] Saving to file '%s' NOW.\n", savefile);
 			DumpSave(savefile);

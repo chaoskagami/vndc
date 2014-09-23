@@ -37,4 +37,7 @@ void op_jump(char* file, int* lineTo, bool isSave);
 void op_goto(char* label);
 void op_choice(char* choices);
 
+// Extensions.
+void op_save(char* file);
+
 #endif
