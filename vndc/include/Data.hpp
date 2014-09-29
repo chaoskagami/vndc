@@ -43,10 +43,12 @@ class DataContainer {
 		char* window_name;
 		char* next_line; // Used for voice-detect.
 					// It's impossible to parse without lookahead.
+		UDisplayable* text_box_base;
 };
 
 DataContainer* GetData();
-void CreateDataContainer();
+void Data_PreInit();
+void Data_PostInit();
 void DumpSave(char* fname);
 
 #endif

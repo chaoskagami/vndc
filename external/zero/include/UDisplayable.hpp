@@ -17,6 +17,7 @@ typedef enum {
 			UDisplayable(ContextManager* ctx, char* fname); // Sets up in normal mode.
 			UDisplayable(ContextManager* ctx, UDisplayableMode mode, char* fname); // Sets up in specified mode; params not set
 			UDisplayable(ContextManager* ctx, UDisplayableMode mode, void* memory, int mSize); // Sets up from memory block in mode
+			UDisplayable(ContextManager* cx, UDisplayableMode mode, SDL_Surface* bitmap_tmp);  // Loads from SDL_surface
 
 			// All modes can use the following.
 			void SetXY(double x, double y);
@@ -40,6 +41,7 @@ typedef enum {
 			// Only specific modes can use these. Otherwise, they nop.
 			void SetHitbox(int x, int y, int w, int h);
 			void SetDock(int x, int y, int w, int h);
+			void SetOverlay(bool state);
 
 			// Only animated Displayables can use these.
 			void SetFrameWidth(int frameW);
@@ -56,6 +58,7 @@ typedef enum {
 			void* bitmap; // Will contain either a SDL_Surface or SDL_Texture
 			SDL_Rect loc, clip;
 			ContextManager* ctx;
+			bool over;
 
 			int bmp_w, bmp_h;
 

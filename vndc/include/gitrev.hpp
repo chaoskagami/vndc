@@ -1,5 +1,5 @@
 #ifndef GIT_REV_HDR
 #define GIT_REV_HDR
-#define GIT_REV "600f8372132a379e10f46584bba06b5013e8bf05"
+#define GIT_REV "2aefc48e99ae39a5427858ce44bfb625c51ac8db"
 
 #endif

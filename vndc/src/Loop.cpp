@@ -61,5 +61,7 @@ void Setup() {
 	GetData()->ctx->Text()->Outline(1);
 	GetData()->ctx->Text()->SetColor(255,255,255,255);
 
+	Data_PostInit();
+
 	op_cleartext();
 }

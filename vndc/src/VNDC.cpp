@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	CreateDataContainer();
+	Data_PreInit();
 
 	GetData()->ctx = new ContextManager();
 
