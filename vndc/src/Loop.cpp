@@ -27,8 +27,8 @@ void Loop() {
 	if(GetData()->ctx->GetQuit()) return;
 		Parse();
 
-		// We don't clear. This system uses dirty blits. ;P
-		GetData()->ctx->Flush();
+	// We don't clear. This system uses dirty blits. ;P
+	GetData()->ctx->Flush();
 
 	GetData()->ctx->StartSync();
 

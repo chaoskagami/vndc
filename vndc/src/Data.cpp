@@ -75,15 +75,14 @@ void DumpSave(char* fname) {
 	// Dump script file.
 
 	// A save actually ends up as a mini-script.
-	// So, to load a save you load this as the
-	// main script
-	// For example:
+	// So, to load a save you load something like this as the
+	// main script:
+
 	// setvar data1 = 6
 	// setvar data2 = 9
 	// music mus
 	// bgload bg
 	// jump script.scr 60
-	// The call command runs a scr, and returns here.
 
 	FILE* save_to = fopen(fname, "w");
 
@@ -101,8 +100,7 @@ void DumpSave(char* fname) {
 
 	fprintf(save_to, "music %s\n", &(GetData()->current_music[6]));
 	fprintf(save_to, "bgload %s\n", &(GetData()->current_bg[11]));
-	fprintf(save_to, "jump %s %d\n", &(GetData()->current_scr[7]), GetData()->currentLine - 1); // The text never completely displayed
-																								// So restore back one to replay
-
+	fprintf(save_to, "jump %s %d\n", &(GetData()->current_scr[7]), GetData()->currentLine - 1); // The text ack'd with leftclick
+												    // So restore back one to replay
 	fclose(save_to);
 }

@@ -194,6 +194,9 @@
 
 	// From SDL_Surface.
 	UDisplayable::UDisplayable(ContextManager* cx, UDisplayableMode mode, SDL_Surface* bitmap_tmp) {
+
+		DefaultVars();
+
 		this->x = 0;
 		this->y = 0;
 		this->loc.x = 0;
@@ -241,8 +244,10 @@
 	// Sets the position on screen.
 
 	void UDisplayable::SetXY(double x, double y) {
-		if (Error)
+		if (Error) {
+			fprintf(stderr, "[WARN] Error flag set.\n");
 			return;
+		}
 		this->x = x;
 		this->y = y;
 
@@ -254,23 +259,41 @@
 			this->y = 0;
 
 		if(frameIndex == -1) {
-			if(this->x > frame[2] - this->bmp_w)
-				this->x = (double)(frame[2] - this->bmp_w);
+			if(over) {
+				if(this->x > ctx->GetWidth() - this->bmp_w)
+					this->x = (double)(ctx->GetWidth() - this->bmp_w);
+			}
+			else {
+				if(this->x > frame[2] - this->bmp_w)
+					this->x = (double)(frame[2] - this->bmp_w);
+			}
 		}
 		else {
-			if(this->x > frame[2] - this->frameWidth)
-				this->x = (double)(frame[2] - this->frameWidth);
+			if(over) {
+				if(this->x > ctx->GetWidth() - this->bmp_w)
+					this->x = (double)(ctx->GetWidth() - this->frameWidth);
+			}
+			else {
+				if(this->x > frame[2] - this->frameWidth)
+					this->x = (double)(frame[2] - this->frameWidth);
+			}
 		}
 
-		if(this->y > frame[3] - this->bmp_h)
-			this->y = (double)(frame[3] - this->bmp_h);
+		if(over) {
+			if(this->y > ctx->GetHeight() - this->bmp_h)
+				this->y = (double)(ctx->GetHeight() - this->bmp_h);
+		}
+		else {
+			if(this->y > frame[3] - this->bmp_h)
+				this->y = (double)(frame[3] - this->bmp_h);
+		}
 
 		this->loc.x = (int)this->x;
 		this->loc.y = (int)this->y;
 
-		#ifdef DEBUG_OVERKILL
-		printf("[UDisplayable::SetXY] x:%d y:%d w:%d h:%d\n", frame[0], frame[1], frame[2], frame[3]);
-		#endif
+//		#ifdef DEBUG_OVERKILL
+		printf("[UDisplayable::SetXY] x:%d y:%d\n", this->loc.x, this->loc.y);
+//		#endif
 	}
 
 	// Modifies the position on screen. Meant to avoid embedded retrievals.
@@ -290,16 +313,34 @@
 			this->y = 0;
 
 		if(frameIndex == -1) {
-			if(this->x > frame[2] - this->bmp_w)
-				this->x = (double)(frame[2] - this->bmp_w);
+			if(over) {
+				if(this->x > ctx->GetWidth() - this->bmp_w)
+					this->x = (double)(ctx->GetWidth() - this->bmp_w);
+			}
+			else {
+				if(this->x > frame[2] - this->bmp_w)
+					this->x = (double)(frame[2] - this->bmp_w);
+			}
 		}
 		else {
-			if(this->x > frame[2] - this->frameWidth)
-				this->x = (double)(frame[2] - this->frameWidth);
+			if(over) {
+				if(this->x > ctx->GetWidth() - this->bmp_w)
+					this->x = (double)(ctx->GetWidth() - this->frameWidth);
+			}
+			else {
+				if(this->x > frame[2] - this->frameWidth)
+					this->x = (double)(frame[2] - this->frameWidth);
+			}
 		}
 
-		if(this->y > frame[3] - this->bmp_h)
-			this->y = (double)(frame[3] - this->bmp_h);
+		if(over) {
+			if(this->y > ctx->GetHeight() - this->bmp_h)
+				this->y = (double)(ctx->GetHeight() - this->bmp_h);
+		}
+		else {
+			if(this->y > frame[3] - this->bmp_h)
+				this->y = (double)(frame[3] - this->bmp_h);
+		}
 
 		this->loc.x = (int)this->x;
 		this->loc.y = (int)this->y;
@@ -378,7 +419,7 @@
 		SDL_Rect src;
 		src.x = 0;
 		src.y = 0;
-		src.w = frameWidth;
+		src.w = bmp_w;
 		src.h = bmp_h;
 
 		if (frameIndex == -1) {
@@ -397,16 +438,10 @@
 		frameClip.h = bmp_h;
 
 		if(ctx->GLMode()) {
-			SDL_Rect image_rect;
-
-			image_rect.x = 0;
-			image_rect.x = 0;
-			image_rect.w = bmp_w;
-			image_rect.h = bmp_h;
 			if(over)
-				ctx->OverlayBlit(bitmap, &frameClip, &loc_adj, &image_rect); // GL needs data that isn't inside of bitmap.
+				ctx->OverlayBlit(bitmap, &frameClip, &loc_adj, &src); // GL needs data that isn't inside of bitmap.
 			else
-				ctx->Blit(bitmap, &frameClip, &loc_adj, &image_rect); // GL needs data that isn't inside of bitmap.
+				ctx->Blit(bitmap, &frameClip, &loc_adj, &src); // GL needs data that isn't inside of bitmap.
 
 		}
 		else {

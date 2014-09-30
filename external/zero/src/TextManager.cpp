@@ -58,68 +58,49 @@ void TextManager::Render(char* text) {
 }
 
 void TextManager::Render(char* text, int x, int y) {
-	if (text == NULL || fonts[current_font] == NULL)
+	if (text == NULL || fonts[current_font] == NULL) {
+		fprintf(stderr, "[WARN] Null text or font passed.\n");
 		return;
+	}
+
 
 	SDL_Surface *sf1 = NULL, *sf2 = NULL;
+
 	sf1 = TTF_RenderUTF8_Blended(fonts[current_font], text, color);
+
 	if(outline) {
+		// Invert normal color.
 		SDL_Color n_color;
 		n_color.r = 255 - color.r;
 		n_color.g = 255 - color.g;
 		n_color.b = 255 - color.b;
 		n_color.a = color.a;
+
+		// Outline, so increase size.
 		TTF_SetFontOutline(fonts[current_font], outline_px);
 		sf2 = TTF_RenderUTF8_Blended(fonts[current_font], text, n_color);
+
+		// Disable Outline.
 		TTF_SetFontOutline(fonts[current_font], 0);
 	}
 
-	SDL_Rect src, dst, src2, dst2;
-	src.x = 0;
-	src.y = 0;
-	src.w = sf1->w;
-	src.h = sf1->h;
-
-	dst.x = x;
-	dst.y = y;
-	dst.w = src.w;
-	dst.h = src.h;
-
 	if(outline) {
-		src2.x = 0;
-		src2.y = 0;
-		src2.w = sf2->w;
-		src2.h = sf2->h;
+		UDisplayable* r_sf2 = new UDisplayable(ctx, Normal, sf2);
+		r_sf2->SetOverlay(true);
+		r_sf2->SetXY(x-outline_px, y-outline_px);
 
-		dst2.x = x - (outline_px);
-		dst2.y = y - (outline_px);
-		dst2.w = src2.w;
-		dst2.h = src2.h;
+		r_sf2->Blit();
+		
+		delete r_sf2;
 	}
 
-	if(ctx->Accelerated()) {
-		SDL_Texture *tmp1 = NULL, *tmp2 = NULL;
+	UDisplayable* r_sf1 = new UDisplayable(ctx, Normal, sf1);
+	r_sf1->SetOverlay(true);
+	r_sf1->SetXY(x, y);
 
-		tmp1 = SDL_CreateTextureFromSurface(ctx->Renderer(), sf1);
-		if(outline)
-			tmp2 = SDL_CreateTextureFromSurface(ctx->Renderer(), sf2);
+	r_sf1->Blit();
 
-		ctx->OverlayBlit(tmp2, &src2, &dst2, NULL);
-		ctx->OverlayBlit(tmp1, &src, &dst, NULL);
-
-		SDL_DestroyTexture(tmp2);
-		SDL_DestroyTexture(tmp1);
-
-	}
-	else {
-		ctx->OverlayBlit(sf2, &src, &dst, NULL);
-		ctx->OverlayBlit(sf1, &src, &dst, NULL);
-	}
-
-	SDL_FreeSurface(sf2);
-	SDL_FreeSurface(sf1);
-
-
+	delete r_sf1;
 }
 
 int TextManager::TestLen(char* text) {
@@ -157,43 +138,48 @@ void TextManager::SetFontUsed(int index)
 // So your string will likely not be usable as before.
 void TextManager::SplitStringByWidth(char* string, int max_w, int* OUT_num, char*** OUT_ptrs) {
 	if(TestLen(string) > max_w) {
+		/* new algo */
+		char** ptrs = NULL;
+		int lines = 0;
+		int len = strlen(string);
 
-			/* new algo */
-			char** ptrs = NULL;
-			int lines = 0;
+		int counted = 0;
 
-			int len = strlen(string);
+		while(counted < len) {
+			char* pt_start = &string[counted];
+			char* pt_end = &pt_start[strlen(pt_start)];
 
-			int counted = 0;
+			while(pt_end > pt_start && TestLen(pt_start) > max_w) {
+				*pt_end = ' ';
+				--pt_end;
+				while (*pt_end != ' ' && pt_end > pt_start) --pt_end;
 
-			while(counted < len) {
-				char* pt_start = &string[counted];
-				char* pt_end = &pt_start[strlen(pt_start)];
-
-				while(pt_end > pt_start && TestLen(pt_start) > max_w) {
-					*pt_end = ' ';
-					--pt_end;
-
-					while (*pt_end != ' ' && pt_end > pt_start) --pt_end;
-
-					*pt_end = '\0';
-				}
-
-				#ifdef DEBUG_OVERKILL
-				printf("Reduced line %d: %s\n", lines, pt_start);
-				#endif
-
-				ptrs = (char**)realloc(ptrs, sizeof(char*)*(lines+1));
-
-				ptrs[lines] = pt_start;
-
-				counted += strlen(pt_start) + 1;
-
-				++lines;
+				*pt_end = '\0';
 			}
 
-			OUT_num[0] = lines;
+			#ifdef DEBUG_OVERKILL
+			printf("Reduced line %d: %s\n", lines, pt_start);
+			#endif
 
-			OUT_ptrs[0] = ptrs;
+			ptrs = (char**)realloc(ptrs, sizeof(char*)*(lines+1));
+
+			ptrs[lines] = pt_start;
+
+			counted += strlen(pt_start) + 1;
+
+			++lines;
 		}
+
+		*OUT_num = lines;
+
+		*OUT_ptrs = ptrs;
+	}
+	else {
+		char** ptrs = (char**)calloc(sizeof(char*), 1);
+		ptrs[0] = string;
+
+		// We pass thru values anyways, regardless of there being one line.
+		*OUT_num = 1;
+		*OUT_ptrs = ptrs;
+	}
 }
