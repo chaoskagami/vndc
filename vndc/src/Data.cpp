@@ -56,14 +56,14 @@ void Data_PreInit() {
 void Data_PostInit() {
 	/* Generate the surface for use with cleartext. */
 	int width_dr = (GetData()->render_x2 - GetData()->render_x1 + 20);
-	int height_dr = (GetData()->render_y2 - GetData()->render_y1 + 20);
+	int height_dr = (GetData()->render_y2 - GetData()->render_y1 + 20 + 30);
 
 	SDL_Surface* pass_sfc = SDL_CreateRGBSurface(0, width_dr, height_dr, 32, RED_MASK, GREEN_MASK, BLUE_MASK, ALPHA_MASK);
 	SDL_FillRect(pass_sfc, NULL, SDL_MapRGBA(pass_sfc->format, 0, 0, 0, 100));
 
 	GetData()->text_box_base = new UDisplayable(GetData()->ctx, Normal, pass_sfc);
 	GetData()->text_box_base->SetOverlay(true);
-	// GetData()->text_box_base->SetXY(GetData()->render_x1, GetData()->render_y1);
+	GetData()->text_box_base->SetXY(GetData()->render_x1 - 10, GetData()->render_y1 - 10);
 }
 
 DataContainer* GetData() {

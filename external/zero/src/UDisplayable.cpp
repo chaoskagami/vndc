@@ -17,6 +17,8 @@
 			frameIndex = -1;
 
 			Error = false;
+
+			over = false;
 	}
 
 	// Creates a new Displayable.
@@ -186,6 +188,8 @@
 		else {
 			this->bitmap = cx->GLTexImage(bitmap_tmp);
 		}
+
+		this->dispMode = mode;
 	}
 
 	// From SDL_Surface.
@@ -230,6 +234,8 @@
 		else {
 			this->bitmap = cx->GLTexImage(bitmap_tmp);
 		}
+
+		this->dispMode = mode;
 	}
 
 	// Sets the position on screen.
