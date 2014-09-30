@@ -73,7 +73,7 @@ void op_text(char* string) {
 			op_cleartext();
 
 		for(int i=0; i < lines; i++) {
-			printf("[br] %s\n", ptrs[i]);
+			//printf("[br] %s\n", ptrs[i]);
 			txt->Render(ptrs[i], GetData()->text_x, GetData()->text_y);
 			GetData()->text_y += GetData()->text_gap;
 		}

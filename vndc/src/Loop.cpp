@@ -39,7 +39,12 @@ void Loop() {
 
 void Setup() {
 	// Init window
-	GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, (GetData()->sw_rendering ? Software : Accel2d ));
+	if (GetData()->rendering_mode == 0)
+		GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, Software);
+	else if (GetData()->rendering_mode == 1)
+		GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, Accel2d);
+	else if (GetData()->rendering_mode == 2)	
+		GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, OpenGL);
 
 	GetData()->window_name = (char*)calloc(sizeof(char), 400);
 	sprintf(GetData()->window_name, "%s", "VNDC Interpreter ");

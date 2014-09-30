@@ -291,9 +291,9 @@
 		this->loc.x = (int)this->x;
 		this->loc.y = (int)this->y;
 
-//		#ifdef DEBUG_OVERKILL
+		#ifdef DEBUG_OVERKILL
 		printf("[UDisplayable::SetXY] x:%d y:%d\n", this->loc.x, this->loc.y);
-//		#endif
+		#endif
 	}
 
 	// Modifies the position on screen. Meant to avoid embedded retrievals.
@@ -424,9 +424,9 @@
 
 		if (frameIndex == -1) {
 			if(over)
-				ctx->OverlayBlit(bitmap, &src, &loc_adj, NULL);
+				ctx->OverlayBlit(bitmap, &src, &loc_adj, &src);
 			else
-				ctx->Blit(bitmap, &src, &loc_adj, NULL);
+				ctx->Blit(bitmap, &src, &loc_adj, &src);
 			return;
 		}
 
@@ -437,19 +437,10 @@
 		frameClip.w = frameWidth;
 		frameClip.h = bmp_h;
 
-		if(ctx->GLMode()) {
-			if(over)
-				ctx->OverlayBlit(bitmap, &frameClip, &loc_adj, &src); // GL needs data that isn't inside of bitmap.
-			else
-				ctx->Blit(bitmap, &frameClip, &loc_adj, &src); // GL needs data that isn't inside of bitmap.
-
-		}
-		else {
-			if(over)
-				ctx->OverlayBlit(bitmap, &frameClip, &loc_adj, NULL);
-			else
-				ctx->Blit(bitmap, &frameClip, &loc_adj, NULL);
-		}
+		if(over)
+			ctx->OverlayBlit(bitmap, &frameClip, &loc_adj, &src);
+		else
+			ctx->Blit(bitmap, &frameClip, &loc_adj, &src);
 	}
 
 	// Get SDL_Rect for collision calculation. In a base Displayable, it returns the image width.

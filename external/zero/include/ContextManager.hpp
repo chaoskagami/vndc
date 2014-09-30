@@ -104,6 +104,8 @@ class TextManager; // Forward decl
 			bool accelerate;
 			bool opengl_mode;
 
+			GLuint fg, bg, fg_tex, bg_tex;
+
 			bool StartQuit;
 
 			AudioManager* audioMgr;

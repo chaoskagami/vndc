@@ -27,26 +27,32 @@ int main(int argc, char** argv) {
 	bool newgame = false;
 	char c;
 	#ifdef USE_ANDROID
-	bool software = true;
+	int mode = 0;
 	bool fulls = true;
 	#else
-	bool software = false;	
+	int mode = 1;
 	bool fulls = false;
 	#endif
 
-	while((c = getopt(argc, argv, "fwnbvx:y:d:m:s:ch")) != -1) {
+	while((c = getopt(argc, argv, "fr:nbvx:y:d:m:s:ch")) != -1) {
 		switch(c) {
 			case 'f':
 				printf("[info] Starting in fullscreen mode.\n");
 				fulls = true;
 				break;
-			case 'w':
-				#ifdef USE_ANDROID
-				printf("[info] Forcing Hardware Acceleration.\n");
-				#else
-				printf("[info] Utilizing Software Rendering.\n");
-				#endif
-				software = !software;
+			case 'r':
+				if(!strcmp(optarg, "sdlsw")) {
+					printf("[info] Using SDL software backend.\n");
+					mode = 0;
+				}
+				if(!strcmp(optarg, "sdlhw")) {
+					printf("[info] Using SDL hardware backend.\n");
+					mode = 1;
+				}
+				if(!strcmp(optarg, "gl")) {
+					printf("[info] Using OpenGL backend. (note - experimental)\n");					
+					mode = 2;
+				}
 				break;
 			case 'n':
 				printf("[info] New game, not reloading save.\n");
@@ -85,7 +91,7 @@ int main(int argc, char** argv) {
 				break;
 			case 'h':
 				printf("-x size -y size\tStretch display window to WxH\n");
-				printf("-w\t\tUse Software Rendering (on android: force HW render)\n");
+				printf("-r mode\t\tUse render mode (sdlsw, sdlhw, gl)\n");
 				printf("-f\t\tFullscreen mode.\n");
 				printf("-n\t\tNew Game. Do not reload default save.\n");
 				printf("-d dir\t\tChange to directory/Run game in directory\n");
@@ -120,7 +126,7 @@ int main(int argc, char** argv) {
 
 	GetData()->vndc_enabled = vndc_extensions;
 	GetData()->verbose = enable_v;
-	GetData()->sw_rendering = software;
+	GetData()->rendering_mode = mode;
 	GetData()->fullscreen = fulls;
 
 	if(debug_enable) {

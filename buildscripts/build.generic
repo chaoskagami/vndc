@@ -12,7 +12,7 @@ LIB=$ROOT/external/lib
 BIN=$ROOT/bin
 
 CXXFLAGS="-g `pkg-config sdl2 --cflags` `pkg-config SDL2_mixer --cflags` `pkg-config SDL2_image --cflags` `pkg-config SDL2_ttf --cflags`"
-LDFLAGS="`pkg-config sdl2 --libs` `pkg-config SDL2_image --libs` `pkg-config SDL2_ttf --libs` `pkg-config SDL2_mixer --libs` -lGL"
+LDFLAGS="-lSDL2 -lSDL2_mixer -lSDL2_image -lSDL2_ttf -lGL -lGLEW"
 INCLUDE="-I$ROOT/external/zero/include -I$ROOT/vndc/include"
 
 source buildscripts/mk

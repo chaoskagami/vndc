@@ -156,7 +156,6 @@
 
 	// OpenGL window. Note - a LOT functions different in this mode.
 	void ContextManager::_InitWindowGL(int width, int height, bool fulls) {
-
 		opengl_mode = true;
 
 		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
@@ -175,6 +174,16 @@
 
 		glctx = SDL_GL_CreateContext(window);
 
+		glewExperimental = GL_TRUE;
+		glewInit();
+
+		if(glGenFramebuffers == NULL || glBindFramebuffer == NULL || glFramebufferTexture == NULL || glDrawBuffers == NULL) {
+			fprintf(stderr, "[ERR] Glew didn't load some extensions needed.\n");
+			fprintf(stderr, "[ERR] I assume your card doesn't support them.\n");
+			exit(-11);
+		}
+
+
 		glEnable( GL_TEXTURE_2D );
 
 		glViewport( 0, 0, width, height );
@@ -190,6 +199,39 @@
 		glLoadIdentity();
 
 		vertCnt = new VertexController(this);
+
+		// Create Renderable Textures.
+		// Unfortunately, GL is an asshole and I have no clue.
+
+		glGenFramebuffers(1, &bg);
+		glBindFramebuffer(GL_FRAMEBUFFER, bg);
+
+		glGenTextures(1, &bg_tex);
+		glBindTexture(GL_TEXTURE_2D, bg_tex);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, bg_tex, 0);
+
+		GLenum colbuf_bg[1] = {GL_COLOR_ATTACHMENT0};
+		glDrawBuffers(1, colbuf_bg);
+
+		glGenFramebuffers(1, &fg);
+		glBindFramebuffer(GL_FRAMEBUFFER, fg);
+
+		glGenTextures(1, &fg_tex);
+		glBindTexture(GL_TEXTURE_2D, fg_tex);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, fg_tex, 0);
+
+		GLenum colbuf_fg[1] = {GL_COLOR_ATTACHMENT1};
+		glDrawBuffers(1, colbuf_fg);
 	}
 
 	// Init window with a logical size and a real one. Determines which backend to use.
@@ -212,6 +254,9 @@
 			_InitWindowLogicalSW(width_win, height_win, width_log, height_log, fulls);
 			this->surface_o = SDL_CreateRGBSurface(0, width_win, height_win, 32, RED_MASK, GREEN_MASK, BLUE_MASK, ALPHA_MASK);
 			SDL_SetSurfaceBlendMode(this->surface_o, SDL_BLENDMODE_BLEND);
+		}
+		else if (disp == OpenGL) {
+			_InitWindowLogicalGL(width_win, height_win, width_log, height_log, fulls);
 		}
 
 		txtMgr = new TextManager(this);
@@ -274,6 +319,87 @@
 		}
 	}
 
+	// OpenGL window. Note - a LOT functions different in this mode.
+	void ContextManager::_InitWindowLogicalGL(int width_win, int height_win, int width_log, int height_log, bool fulls) {
+
+		opengl_mode = true;
+
+		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
+
+		// Request OpenGL 3.0 context. Yes, not 3.1, 3.2, 4.0. THREE POINT O'.
+		// Why? I use the fixed function pipeline which is gonzo in >3.1
+		// and I'm not about to learn a new api that consists of VBOs, FBOs,
+		// and shader code (which btw, is retarded.)
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+		if(!fulls)
+			this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width_win, height_win, SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL);
+		else
+			this->window = SDL_CreateWindow("Zero", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width_win, height_win, SDL_WINDOW_FULLSCREEN|SDL_WINDOW_OPENGL);
+
+		glctx = SDL_GL_CreateContext(window);
+
+		glewExperimental = GL_TRUE;
+		glewInit();
+
+		if(glGenFramebuffers == NULL || glBindFramebuffer == NULL || glFramebufferTexture == NULL || glDrawBuffers == NULL) {
+			fprintf(stderr, "[ERR] Glew didn't load some extensions needed.\n");
+			fprintf(stderr, "[ERR] I assume your card doesn't support them.\n");
+			exit(-11);
+		}
+
+		glEnable( GL_TEXTURE_2D );
+
+		glViewport( 0, 0, width_win, height_win );
+
+		glClear( GL_COLOR_BUFFER_BIT );
+
+		glMatrixMode( GL_PROJECTION );
+		glLoadIdentity();
+
+		glOrtho(0.0f, width_win, height_win, 0.0f, -1.0f, 1.0f);
+
+		glMatrixMode( GL_MODELVIEW );
+		glLoadIdentity();
+
+		vertCnt = new VertexController(this);
+
+		fprintf(stderr, "[info] Generating FBOs...(bg) ");
+
+		glGenFramebuffers(1, &bg);
+		glBindFramebuffer(GL_FRAMEBUFFER, bg);
+
+		glGenTextures(1, &bg_tex);
+		glBindTexture(GL_TEXTURE_2D, bg_tex);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_log, height_log, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, bg_tex, 0);
+
+		GLenum colbuf_bg[1] = {GL_COLOR_ATTACHMENT0};
+		glDrawBuffers(1, colbuf_bg);
+
+		glGenFramebuffers(1, &fg);
+		glBindFramebuffer(GL_FRAMEBUFFER, fg);
+
+		glGenTextures(1, &fg_tex);
+		glBindTexture(GL_TEXTURE_2D, fg_tex);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_win, height_win, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, fg_tex, 0);
+
+		GLenum colbuf_fg[1] = {GL_COLOR_ATTACHMENT1};
+		glDrawBuffers(1, colbuf_fg);
+
+		fprintf(stderr, "[info] OpenGL initialized.\n");
+	}
+
 	// Clears the display to black.
 
 	void ContextManager::Clear() {
@@ -293,6 +419,18 @@
 			SDL_RenderClear(renderer);
 		}
 		else if (opengl_mode) {
+			glBindFramebuffer(GL_FRAMEBUFFER, this->bg);
+			glViewport(0,0,LOG_height,LOG_width);
+			glClearColor(0,0,0,0);
+			glClear(GL_COLOR_BUFFER_BIT);
+			
+			glBindFramebuffer(GL_FRAMEBUFFER, this->fg);
+			glViewport(0,0,WIN_height,WIN_width);
+			glClearColor(0,0,0,0);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glViewport(0,0,WIN_height,WIN_width);
 			glClearColor(0,0,0,0);
 			glClear(GL_COLOR_BUFFER_BIT);
 		}
@@ -317,8 +455,13 @@
 			SDL_SetRenderTarget(renderer, NULL);
 		}
 		else if (opengl_mode) {
+			glBindFramebuffer(GL_FRAMEBUFFER, this->fg);
+
+			glViewport(0,0,WIN_height,WIN_width);
 			glClearColor(0,0,0,0);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 		else {
 			SDL_FillRect(this->surface_o, NULL, SDL_MapRGBA(this->surface_o->format, 0, 0, 0, 0));
@@ -351,6 +494,65 @@
 			SDL_RenderPresent(renderer);
 		}
 		else if (opengl_mode) {
+			// Render prep.
+
+			GLfloat x_tex, y_tex, x2_tex, y2_tex;
+			x_tex  = 0.0f;
+			y_tex  = 0.0f;
+			x2_tex = 1.0f;
+			y2_tex = 1.0f;
+
+
+			GLfloat x_box, y_box, x2_box, y2_box;
+			x_box = 0;
+			y_box = WIN_height;
+			x2_box = WIN_width;
+			y2_box = 0;
+
+			glColor4f( 1.0f, 1.0f, 1.0f, 1.0f ); //Don't use special coloring
+
+			glBindTexture( GL_TEXTURE_2D, bg_tex );
+
+			glBegin( GL_QUADS );
+				//Bottom-left vertex (corner)
+				glTexCoord2f( x_tex, y_tex );
+				glVertex3f( x_box,  y2_box, 0.0f );
+
+				//Bottom-right vertex (corner)
+				glTexCoord2f( x2_tex, y_tex );
+				glVertex3f( x2_box, y2_box, 0.0f );
+
+				//Top-right vertex (corner)
+				glTexCoord2f( x2_tex, y2_tex );
+				glVertex3f( x2_box, y_box,  0.0f );
+
+				//Top-left vertex (corner)
+				glTexCoord2f( x_tex, y2_tex );
+				glVertex3f( x_box,  y_box,  0.0f );
+			glEnd();
+
+			glBindTexture( GL_TEXTURE_2D, fg_tex );
+
+			glBegin( GL_QUADS );
+				//Bottom-left vertex (corner)
+				glTexCoord2f( x_tex, y_tex );
+				glVertex3f( x_box,  y2_box, 0.0f );
+
+				//Bottom-right vertex (corner)
+				glTexCoord2f( x2_tex, y_tex );
+				glVertex3f( x2_box, y2_box, 0.0f );
+
+				//Top-right vertex (corner)
+				glTexCoord2f( x2_tex, y2_tex );
+				glVertex3f( x2_box, y_box,  0.0f );
+
+				//Top-left vertex (corner)
+				glTexCoord2f( x_tex, y2_tex );
+				glVertex3f( x_box,  y_box,  0.0f );
+			glEnd();
+
+			glBindTexture( GL_TEXTURE_2D, 0 );
+
 			SDL_GL_SwapWindow(window);
 		}
 		else {
@@ -400,6 +602,9 @@
 		}
 		else if(opengl_mode) {
 			GLuint in = ((GLuint*)inp)[0];
+
+			glBindFramebuffer(GL_FRAMEBUFFER, this->bg);
+			glViewport(0,0,LOG_height,LOG_width);
 
 			// printf("[GL] (blit) in: %d\n", in);
 
@@ -456,6 +661,10 @@
 			glEnd();
 
 			glBindTexture( GL_TEXTURE_2D, 0 );
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glViewport(0,0,WIN_height,WIN_width);
+
 		}
 		else {
 			SDL_BlitSurface((SDL_Surface*)inp, src, surface, dst);
@@ -484,6 +693,9 @@
 		else if(opengl_mode) {
 			GLuint in = ((GLuint*)inp)[0];
 
+			glBindFramebuffer(GL_FRAMEBUFFER, this->fg);
+			glViewport(0,0,WIN_height,WIN_width);
+
 			GLfloat x, y, x2, y2;
 			x = 1.0f / glrect->x;
 			y = 1.0f / glrect->y;
@@ -510,6 +722,12 @@
 				glTexCoord2f( x, y2 );
 				glVertex3i( dst->x,          dst->y, 0.0f );
 			glEnd();
+
+			glBindTexture( GL_TEXTURE_2D, 0 );
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glViewport(0,0,WIN_height,WIN_width);
+
 		}
 		else {
 			SDL_BlitSurface((SDL_Surface*)inp, src, surface_o, dst);

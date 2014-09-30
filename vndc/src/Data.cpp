@@ -33,10 +33,10 @@ DataContainer::DataContainer() {
 	currentLine = 0;
 	skip_key_on = false;
 	#ifdef USE_ANDROID
-	sw_rendering = true;
+	rendering_mode = 0;
 	fullscreen = true;
 	#else
-	sw_rendering = false;
+	rendering_mode = 1;
 	fullscreen = false;
 	#endif
 	eof = false;

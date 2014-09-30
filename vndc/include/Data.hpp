@@ -37,7 +37,7 @@ class DataContainer {
 		bool verbose;
 		int currentLine;
 		bool skip_key_on;
-		bool sw_rendering;
+		int rendering_mode;
 		bool fullscreen;
 		bool eof;
 		char* window_name;
