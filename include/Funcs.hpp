@@ -6,8 +6,6 @@
 #include <ctime>
 #include <cstring>
 
-#include "gitrev.hpp"
-
 #include "Data.hpp"
 
 void Parse();                // This reads commands from files.

@@ -8,7 +8,8 @@ VPATH = @srcdir@
 PICFLAGS    := -fPIC
 CXX         := @CXX@
 CXXFLAGS    := @CXXFLAGS@ $(PICFLAGS)
-CPPFLAGS    := -I$(srcdir)/include -I$(srcdir)/platform/include
+STABLE_VER  := 0.3
+CPPFLAGS    := -I$(srcdir)/include -I$(srcdir)/platform/include -DGIT_REV=\"$(shell git rev-parse HEAD || echo "$(STABLE_VER)")\"
 LDFLAGS     := $(PICFLAGS) @LDFLAGS@
 LIBS        := @LIBS@
 INSTALL     := @INSTALL@

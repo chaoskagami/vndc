@@ -5,8 +5,6 @@
 #include <windows.h>
 #endif
 
-#include <gitrev.hpp>
-
 #ifdef USE_ANDROID
 #define printf SDL_Log
 #endif
