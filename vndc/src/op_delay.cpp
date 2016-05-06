@@ -8,11 +8,11 @@
  */
 
 void op_delay(int* frames) {
-	if (GetData()->if_fail != 0 || GetData()->ctx->GetQuit())
-		return;
-	for(int i = 0; i < *frames; i++) {
-		// This is one frame.
-		GetData()->ctx->StartSync();
-		GetData()->ctx->EndSync();
-	}
+    if (GetData()->if_fail != 0 || GetData()->ctx->GetQuit())
+        return;
+    for(int i = 0; i < *frames; i++) {
+        // This is one frame.
+        GetData()->ctx->StartSync();
+        GetData()->ctx->EndSync();
+    }
 }

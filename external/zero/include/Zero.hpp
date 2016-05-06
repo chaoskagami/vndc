@@ -23,15 +23,15 @@
 #include <SDL_opengl.h>
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    #define RED_MASK 	0xff000000
-    #define GREEN_MASK 	0x00ff0000
-    #define BLUE_MASK 	0x0000ff00
-    #define ALPHA_MASK 	0x000000ff
+    #define RED_MASK     0xff000000
+    #define GREEN_MASK     0x00ff0000
+    #define BLUE_MASK     0x0000ff00
+    #define ALPHA_MASK     0x000000ff
 #else
-    #define RED_MASK 	0x000000ff
-    #define GREEN_MASK 	0x0000ff00
-    #define BLUE_MASK 	0x00ff0000
-    #define ALPHA_MASK 	0xff000000
+    #define RED_MASK     0x000000ff
+    #define GREEN_MASK     0x0000ff00
+    #define BLUE_MASK     0x00ff0000
+    #define ALPHA_MASK     0xff000000
 #endif
 
 #include "AudioManager.hpp"

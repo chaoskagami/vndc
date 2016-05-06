@@ -21,8 +21,8 @@
  */
 
 void op_gsetvar(char* var, int *modifier, char *value) {
-	if (GetData()->if_fail != 0)
-		return;
+    if (GetData()->if_fail != 0)
+        return;
 
-	op_setvar(var, modifier, value);
+    op_setvar(var, modifier, value);
 }

@@ -8,6 +8,6 @@
  */
 
 void op_fi() {
-	if(GetData()->if_fail != 0)
-		GetData()->if_fail -= 1;
+    if(GetData()->if_fail != 0)
+        GetData()->if_fail -= 1;
 }

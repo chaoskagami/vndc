@@ -10,9 +10,9 @@
 
 #include "Data.hpp"
 
-void Parse();				// This reads commands from files.
-void ParseShell();			// This reads commands from the shell.
-void ParseCmd(char* line); 	// This does the heavy lifting.
+void Parse();                // This reads commands from files.
+void ParseShell();            // This reads commands from the shell.
+void ParseCmd(char* line);     // This does the heavy lifting.
 void Loop();
 void Wait();
 void Setup();

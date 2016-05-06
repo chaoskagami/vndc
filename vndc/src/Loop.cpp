@@ -3,71 +3,71 @@
 #include "Funcs.hpp"
 
 void Wait() {
-	// If wait wasn't specified, don't halt.
-	// Don't even bother with extensions off.
-	// If we're currently in a quote, leave it alone.
-	// If the line is spoken, then halt previous spoken lines.
-	// If the skip key is held, just gogogo
+    // If wait wasn't specified, don't halt.
+    // Don't even bother with extensions off.
+    // If we're currently in a quote, leave it alone.
+    // If the line is spoken, then halt previous spoken lines.
+    // If the skip key is held, just gogogo
 
-	// bool stop_voice = GetData()->wait_input && GetData()->vndc_enabled && GetData()->is_spoken_line;
+    // bool stop_voice = GetData()->wait_input && GetData()->vndc_enabled && GetData()->is_spoken_line;
 
-	while((GetData()->wait_input && !GetData()->ctx->GetQuit())) {
-		GetData()->ctx->Input();
+    while((GetData()->wait_input && !GetData()->ctx->GetQuit())) {
+        GetData()->ctx->Input();
 
-		GetData()->ctx->Flush();
+        GetData()->ctx->Flush();
 
-		if(GetData()->debug_to_shell)
-			ParseShell();
+        if(GetData()->debug_to_shell)
+            ParseShell();
 
-		if(GetData()->ctx->GetInput(1)) break;
-	}
+        if(GetData()->ctx->GetInput(1)) break;
+    }
 }
 
 void Loop() {
-	if(GetData()->ctx->GetQuit()) return;
-		Parse();
+    if(GetData()->ctx->GetQuit()) return;
+        Parse();
 
-	// We don't clear. This system uses dirty blits. ;P
-	GetData()->ctx->Flush();
+    // We don't clear. This system uses dirty blits. ;P
+    GetData()->ctx->Flush();
 
-	GetData()->ctx->StartSync();
+    GetData()->ctx->StartSync();
 
-		Wait();
+        Wait();
 
-	GetData()->ctx->EndSync();
+    GetData()->ctx->EndSync();
 }
 
 void Setup() {
-	// Init window
-	if (GetData()->rendering_mode == 0)
-		GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, Software);
-	else if (GetData()->rendering_mode == 1)
-		GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, Accel2d);
-	else if (GetData()->rendering_mode == 2)
-		GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, OpenGL);
+    // Init window
+    if (GetData()->rendering_mode == 0)
+        GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, Software);
+    else if (GetData()->rendering_mode == 1)
+        GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, Accel2d);
+    else if (GetData()->rendering_mode == 2)
+        GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, OpenGL);
 
-	GetData()->window_name = (char*)calloc(sizeof(char), 400);
-	sprintf(GetData()->window_name, "%s", "VNDC Interpreter ");
-	GetData()->ctx->SetTitle(GetData()->window_name);
+    GetData()->window_name = (char*)calloc(sizeof(char), 400);
+    sprintf(GetData()->window_name, "%s", "VNDC Interpreter ");
+    GetData()->ctx->SetTitle(GetData()->window_name);
 
-	GetData()->ctx->InputMode(Burst);
+    GetData()->ctx->InputMode(Burst);
 
-	// Input
-	GetData()->ctx->RegisterMouse(&InputAdvance);
-	GetData()->ctx->RegisterInput(SDLK_ESCAPE, &QuitKey);
-	GetData()->ctx->RegisterInput(SDLK_LCTRL, &NopKey);
+    // Input
+    GetData()->ctx->RegisterMouse(&InputAdvance);
+    GetData()->ctx->RegisterInput(SDLK_ESCAPE, &QuitKey);
+    GetData()->ctx->RegisterInput(SDLK_LCTRL, &NopKey);
 
-	GetData()->s_flags = new std::map<std::string, int>();
+    GetData()->s_flags = new std::map<std::string, int>();
 
-	// Font
-	// FIXME - Not loading default.ttf is a segv. Print an error instead
-	GetData()->ctx->Text()->LoadFont((char*)"default.ttf", GetData()->text_size);
-	GetData()->ctx->Text()->SetFontUsed(1);
+    // Font
+    // FIXME - Not loading default.ttf is a segv. Print an error instead
+    GetData()->ctx->Text()->LoadFont((char*)"default.ttf", GetData()->text_size);
+    GetData()->ctx->Text()->SetFontUsed(1);
 
-	GetData()->ctx->Text()->Outline(1);
-	GetData()->ctx->Text()->SetColor(255,255,255,255);
+    GetData()->ctx->Text()->Outline(1);
+    GetData()->ctx->Text()->SetColor(255,255,255,255);
 
-	Data_PostInit();
+    Data_PostInit();
 
-	op_cleartext();
+    op_cleartext();
 }
