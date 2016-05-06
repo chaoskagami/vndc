@@ -1,9 +1,11 @@
 vndc - VNDC is Not a Direct Clone (of VNDS ;P)
 ====
 
-tl;dr
+tl;dr - This is under heavy development. Clone an old revision until I'm done fixing the sad excuse for a build system here.
 
-Install SDL2, SDL2_mixer, SDL_image, SDL_ttf if running a unix. Run ./build in the source dir for targets. Choose the appropriate one.
+-----
+
+For generic platforms you need: SDL2, SDL2_mixer, SDL_image, and SDL_ttf.
 
 You should get a binary named vndc.something in bin. Run vndc -h if you don't know how to run it. Have VNDS files ready. This includes foreground, sound, background, script, and default.ttf
 
@@ -13,7 +15,7 @@ Also important: Unzip zips first. VNDC can't read zipped vnds data files.
 
 A picture says a thousand words. Have one.
 
-![Screenie of Current State](https://raw.github.com/chaoskagami/vndc/data/screenshot.png)
+![Screenie of Current State](https://raw.githubusercontent.com/chaoskagami/vndc/master/data/screenshot.png)
 
 This is a clone of vnds. Actually, it's an enhanced (objectively) version. Why? A better interpreter without artificial limits. It could be potentially possible to use this as a base for a commercial VN if you feel like changing things a bit. This is why I used the MIT license; I'm a free-use guy, not copyleft. ;)
 
