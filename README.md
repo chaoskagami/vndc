@@ -15,7 +15,7 @@ Also important: Unzip zips first. VNDC can't read zipped vnds data files.
 
 A picture says a thousand words. Have one.
 
-![Screenie of Current State](https://raw.githubusercontent.com/chaoskagami/vndc/master/data/screenshot.png)
+![Screenie of Current State](https://raw.githubusercontent.com/chaoskagami/vndc/data/screenshot.png)
 
 This is a clone of vnds. Actually, it's an enhanced (objectively) version. Why? A better interpreter without artificial limits. It could be potentially possible to use this as a base for a commercial VN if you feel like changing things a bit. This is why I used the MIT license; I'm a free-use guy, not copyleft. ;)
 
