@@ -32,16 +32,16 @@ DataContainer::DataContainer() {
 	verbose = false;
 	currentLine = 0;
 	skip_key_on = false;
-	#ifdef USE_ANDROID
+#ifdef USE_ANDROID
 	rendering_mode = 0;
 	fullscreen = true;
-	#else
+#else
 	rendering_mode = 1;
 	fullscreen = false;
-	#endif
+#endif
 	eof = false;
 	next_line = NULL; // Used for voice-detect.
-				// It's impossible to parse without lookahead.
+					// It's impossible to parse without lookahead.
 }
 
 void Data_PreInit() {

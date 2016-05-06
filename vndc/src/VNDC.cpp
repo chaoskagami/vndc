@@ -152,7 +152,7 @@ int main(int argc, char** argv) {
 				op_jump((char*)"save.scr", NULL, true);
 			}
 			else // Jump to main, there is no save.
-				op_jump(GetData()->main_scr[0], NULL, true);				
+				op_jump(GetData()->main_scr[0], NULL, true);
 		}
 		else // Otherwise just jump to the main screen.
 			op_jump(GetData()->main_scr[0], NULL, true);

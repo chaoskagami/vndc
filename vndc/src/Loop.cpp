@@ -43,7 +43,7 @@ void Setup() {
 		GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, Software);
 	else if (GetData()->rendering_mode == 1)
 		GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, Accel2d);
-	else if (GetData()->rendering_mode == 2)	
+	else if (GetData()->rendering_mode == 2)
 		GetData()->ctx->InitWindowLogical(GetData()->physical_w, GetData()->physical_h, GetData()->screen_w, GetData()->screen_h, GetData()->fullscreen, OpenGL);
 
 	GetData()->window_name = (char*)calloc(sizeof(char), 400);
@@ -60,6 +60,7 @@ void Setup() {
 	GetData()->s_flags = new std::map<std::string, int>();
 
 	// Font
+	// FIXME - Not loading default.ttf is a segv. Print an error instead
 	GetData()->ctx->Text()->LoadFont((char*)"default.ttf", GetData()->text_size);
 	GetData()->ctx->Text()->SetFontUsed(1);
 

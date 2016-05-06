@@ -2,13 +2,22 @@
 
 	// Sets up.
 	AudioManager::AudioManager() {
-		int MixerFlags = MIX_INIT_OGG | MIX_INIT_FLAC | MIX_INIT_MP3;
-		if((Mix_Init(MixerFlags) & MixerFlags) != MixerFlags) {
+		if((Mix_Init(MIX_INIT_OGG) & MIX_INIT_OGG) != MIX_INIT_OGG) {
 			// Failed to load.
-			fprintf(stderr, "[E] Failed on Mix_Init. Reported error:\n");
-			fprintf(stderr, "[E] %s\n", Mix_GetError());
-			fprintf(stderr, "[E] Fatal. Dying.\n");
-			exit(-1);
+			fprintf(stderr, "[W] Failed on Mix_Init for OGG format.\n");
+			fprintf(stderr, "[W] Internal message: %s\n", Mix_GetError());
+		}
+
+		if((Mix_Init(MIX_INIT_FLAC) & MIX_INIT_FLAC) != MIX_INIT_FLAC) {
+			// Failed to load.
+			fprintf(stderr, "[W] Failed on Mix_Init for FLAC format.\n");
+			fprintf(stderr, "[W] Internal message: %s\n", Mix_GetError());
+		}
+
+		if((Mix_Init(MIX_INIT_MP3) & MIX_INIT_MP3) != MIX_INIT_MP3) {
+			// Failed to load.
+			fprintf(stderr, "[W] Failed on Mix_Init for MP3 format.\n");
+			fprintf(stderr, "[W] Internal message: %s\n", Mix_GetError());
 		}
 
 		uint16_t fmt = 0;
