@@ -3,38 +3,28 @@ top_srcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-.SUFFIXES:
-.SUFFIXES: .c .o
+.SUFFIXES: .c .o .cpp
 
-OPT=-g -O
+PICFLAGS    := -fPIC
+CXX         := @CXX@
+CXXFLAGS    := @CXXFLAGS@ $(PICFLAGS)
+CPPFLAGS    := -I$(srcdir)/include -I$(srcdir)/platform/include
+LDFLAGS     := $(PICFLAGS) @LDFLAGS@
+LIBS        := @LIBS@
+INSTALL     := @INSTALL@
+prefix      := @prefix@
+exec_prefix := @exec_prefix@
+bindir      := $(exec_prefix)/bin
+libdir      := $(prefix)/lib
+infodir     := $(prefix)/info
 
-AR = ar
-AR_FLAGS = rc
-RANLIB = @RANLIB@
-
-CC = @CC@
-CFLAGS = -I. @CFLAGS@
-LDFLAGS = @LDFLAGS@
-LIBS = @LIBS@
-INSTALL = @INSTALL@
-prefix = @prefix@
-exec_prefix = @exec_prefix@
-bindir = $(exec_prefix)/bin
-libdir = $(prefix)/lib
-infodir = $(prefix)/info
-
-SOURCES=Data.cpp Loop.cpp op_bgload.cpp op_choice.cpp op_cleartext.cpp op_delay.cpp op_fi.cpp op_goto.cpp op_gsetvar.cpp op_if.cpp op_jump.cpp op_music.cpp op_random.cpp op_save.cpp op_setimg.cpp op_setvar.cpp op_sound.cpp op_text.cpp Parse.cpp VNDC.cpp
-
-OBJS=Data.o Loop.o op_bgload.o op_choice.o op_cleartext.o op_delay.o op_fi.o op_goto.o op_gsetvar.o op_if.o op_jump.o op_music.o op_random.o op_save.o op_setimg.o op_setvar.o op_sound.o op_text.o Parse.o VNDC.o
+SOURCES=$(wildcard src/*.cpp platform/src/*.cpp)
+OBJS=$(patsubst %.cpp,%.o,$(SOURCES))
 
 MISC=configure mkinstalldirs install-sh aclocal.m4
 
-# ??? replace with your targets
 all: vndc
 
-# ??? here I make the bindir, libdir and infodir directories; you
-# might not need all of these.  also, I assumed the names PROG and
-# libMYPROG.a for the program and library.
 install: all
 	$(top_srcdir)/mkinstalldirs $(bindir)
 	$(top_srcdir)/mkinstalldirs $(libdir)
@@ -44,21 +34,22 @@ install: all
 uninstall:
 	/bin/rm -f $(bindir)/vndc
 
-vndc: $(SOURCES)
-	$(CXX) $(CXXFLAGS) -o vndc $(OBJS)
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+vndc: $(OBJS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o $@ $(OBJS)
 
 clean:
-	/bin/rm -f *.o vndc
+	/bin/rm -f $(OBJS) vndc
 
 distclean: clean
 	/bin/rm -f Makefile config.h config.status config.cache config.log
 
-nuke: distclean
+clobber: distclean
 	/bin/rm -fr autom4te.cache configure
 
+# These are for compatibility, nothing more.
 mostlyclean: clean
 
 maintainer-clean: clean
-
-#PROG.info: PROG.texi
-#	makeinfo PROG.texi
