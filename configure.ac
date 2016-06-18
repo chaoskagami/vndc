@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([libbinmod], [0.3], [chaos.kagami@gmail.com], [vndc], [http://github.com/chaoskagami/vndc])
+AC_INIT([vndc], [0.3], [chaos.kagami@gmail.com], [vndc], [http://github.com/chaoskagami/vndc])
 AC_CONFIG_SRCDIR([LICENSE])
 
 # Checks for programs.
